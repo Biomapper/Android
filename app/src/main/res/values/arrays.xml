@@ -1,0 +1,26 @@
+<resources>
+    <!-- Map Data Preferences -->
+    <string-array name="data_type_values">
+        <item>canopy_height_model</item>
+        <item>digital_elevation_model</item>
+        <item>above_ground_biomass</item>
+    </string-array>
+
+    <string-array name="data_type_entries">
+        <item>Canopy Height Model</item>
+        <item>Digital Elevation Model</item>
+        <item>Above Ground Biomass</item>
+    </string-array>
+
+    <!-- Map Centering Preferences -->
+    <string-array name="center_loc_entries">
+        <item>Device Location</item>
+        <item>Region of Interest</item>
+    </string-array>
+
+    <string-array name="center_loc_values">
+        <item>device_location</item>
+        <item>region_of_interest</item>
+    </string-array>
+
+</resources>

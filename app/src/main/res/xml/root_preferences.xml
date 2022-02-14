@@ -1,0 +1,74 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/preferences">
+
+
+    <PreferenceCategory app:title="Map Data">
+        <ListPreference
+            app:title="Select Map Data Type"
+            app:key="@string/set_data_type"
+            app:defaultValue="canopy_height_model"
+            app:entries="@array/data_type_entries"
+            app:entryValues="@array/data_type_values"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            android:title="Apply Data Filter"
+            android:key="@string/filter_data"
+            android:summary="Input a range of data values"/>
+    </PreferenceCategory>
+
+
+    <PreferenceCategory app:title="Map Locations">
+        <Preference
+            android:title="Set the Region of Interest"
+            android:key="@string/set_roi"
+            android:summary="Location that can be downloaded" />
+
+        <ListPreference
+            app:title="Set the Default Center Location"
+            app:key="@string/set_default_center_loc"
+            app:defaultValue="device_location"
+            app:entries="@array/center_loc_entries"
+            app:entryValues="@array/center_loc_values"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory app:title="Offline Maps">
+        <Preference
+            android:title="Download Region of Interest"
+            android:key="@string/download_roi"
+            android:summary="" />
+
+        <Preference
+            android:title="Delete Downloaded Data"
+            android:key="@string/delete_downloaded_roi"
+            android:summary="" />
+
+        <SwitchPreferenceCompat
+            app:title="Offline Mode"
+            android:key="@string/enable_offline_mode"
+            app:summaryOff="Currently uses online maps"
+            app:summaryOn="Currently uses offline maps" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
+
+    <!-- OTHER PREFERENCES TYPES NOT CURRENTLY USED -->
+
+    <!--<CheckBoxPreference
+        android:key="checkbox1"
+        android:summaryOff="Description of checkbox 1 off"
+        android:summaryOn="Description of checkbox 1 on"
+        android:title="CheckBox 1"
+        app:dependency="offline_mode">
+    </CheckBoxPreference> -->
+
+    <!--<EditTextPreference
+        app:key="textInput"
+        app:title="Title of Text Preference"
+        app:useSimpleSummaryProvider="true" /> -->

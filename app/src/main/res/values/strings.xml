@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Biomapper</string>
+
+    <!-- Action Menu / Preferences Strings -->
+
+        <!-- Strings visible to the user -->
+    <string name="action_menu_toolbar_title">Action Menu</string>
+
+        <!-- Strings used to specify preferences within the code -->
+    <string name="set_data_type">set_data_type</string>
+    <string name="filter_data">filter_data</string>
+
+    <string name="set_roi">set_roi</string>
+    <string name="set_default_center_loc">set_default_center_loc</string>
+
+    <string name="download_roi">download_roi</string>
+    <string name="delete_downloaded_roi">delete_downloaded_roi</string>
+    <string name="enable_offline_mode">enable_offline_mode</string>
+</resources>

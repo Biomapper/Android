@@ -1,0 +1,1537 @@
+Index: app/src/main/res/xml/root_preferences.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/xml/root_preferences.xml b/app/src/main/res/xml/root_preferences.xml
+--- a/app/src/main/res/xml/root_preferences.xml	(date 1644704197491)
++++ b/app/src/main/res/xml/root_preferences.xml	(date 1644704197491)
+@@ -1,61 +1,64 @@
+ <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+-    android:layout_height="wrap_content">
++    android:layout_height="wrap_content"
++    android:id="@+id/preferences">
++
+ 
+     <PreferenceCategory app:title="Map Data">
+         <ListPreference
+-            app:title="Select Map Data"
+-            app:key="map_data"
++            app:title="Select Map Data Type"
++            app:key="@string/set_data_type"
+             app:defaultValue="canopy_height_model"
+-            app:entries="@array/map_data_entries"
+-            app:entryValues="@array/map_data_values"
++            app:entries="@array/data_type_entries"
++            app:entryValues="@array/data_type_values"
+             app:useSimpleSummaryProvider="true" />
+ 
+         <Preference
+-            android:title="Search For Areas of Interest"
+-            android:summary="Input a range of data values" />
+-            <!-- android:key="@string/" /> -->
++            android:title="Apply Data Filter"
++            android:key="@string/filter_data"
++            android:summary="Input a range of data values"/>
+     </PreferenceCategory>
+ 
+ 
+-    <PreferenceCategory app:title="Map Centering">
++    <PreferenceCategory app:title="Map Locations">
+         <Preference
+-            android:title="Center Map on Current Location"
+-            android:summary="Move the map to your current location"
+-            android:key="@string/center_user_location" />
++            android:title="Set the Region of Interest"
++            android:key="@string/set_roi"
++            android:summary="Location that can be downloaded" />
+ 
+         <ListPreference
+-            app:title="Default Center Location"
+-            app:key="default_center_location"
+-            app:defaultValue="user_set_location"
+-            app:entries="@array/center_entries"
+-            app:entryValues="@array/center_values"
++            app:title="Set the Default Center Location"
++            app:key="@string/set_default_center_loc"
++            app:defaultValue="device_location"
++            app:entries="@array/center_loc_entries"
++            app:entryValues="@array/center_loc_values"
+             app:useSimpleSummaryProvider="true" />
+-
+-        <Preference
+-            android:title="Set the Center Location"
+-            android:summary="Map location upon opening the app" />
+-            <!-- android:key="@string/" /> -->
+     </PreferenceCategory>
+ 
+ 
+     <PreferenceCategory app:title="Offline Maps">
+         <Preference
+-            android:title="Don"
++            android:title="Download Region of Interest"
++            android:key="@string/download_roi"
+             android:summary="" />
+-        <!-- android:key="@string/" /> -->
++
++        <Preference
++            android:title="Delete Downloaded Data"
++            android:key="@string/delete_downloaded_roi"
++            android:summary="" />
+ 
+         <SwitchPreferenceCompat
+             app:title="Offline Mode"
+-            app:key="offline_mode"
+-            app:summaryOff="Can currently use online maps"
+-            app:summaryOn="Currently only uses offline maps" />
+-
++            android:key="@string/enable_offline_mode"
++            app:summaryOff="Currently uses online maps"
++            app:summaryOn="Currently uses offline maps" />
+     </PreferenceCategory>
+ 
++
+ </PreferenceScreen>
+-    <!-- OTHER PREFERENCES TYPES NOT USED -->
++
++    <!-- OTHER PREFERENCES TYPES NOT CURRENTLY USED -->
+ 
+     <!--<CheckBoxPreference
+         android:key="checkbox1"
+Index: app/src/main/res/layout/fragment_base_map.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_base_map.xml b/app/src/main/res/layout/fragment_base_map.xml
+--- a/app/src/main/res/layout/fragment_base_map.xml	(date 1644487124099)
++++ b/app/src/main/res/layout/fragment_base_map.xml	(date 1644487124099)
+@@ -8,7 +8,7 @@
+     tools:context=".BaseMap" >
+ 
+     <fragment
+-        android:id="@+id/map"
++        android:id="@+id/base_map"
+         android:name="com.google.android.gms.maps.SupportMapFragment"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent" />
+Index: app/src/main/res/layout/fragment_action_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_action_menu.xml b/app/src/main/res/layout/fragment_action_menu.xml
+--- a/app/src/main/res/layout/fragment_action_menu.xml	(date 1644571741164)
++++ b/app/src/main/res/layout/fragment_action_menu.xml	(date 1644571741164)
+@@ -13,7 +13,7 @@
+ 
+     <androidx.appcompat.widget.Toolbar
+         android:id="@+id/actionMenuToolbar"
+-        app:title="Action Menu"
++        app:title="@string/action_menu_toolbar_title"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:background="?attr/colorPrimaryVariant"
+Index: app/src/main/res/values/arrays.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/arrays.xml b/app/src/main/res/values/arrays.xml
+--- a/app/src/main/res/values/arrays.xml	(date 1644699446237)
++++ b/app/src/main/res/values/arrays.xml	(date 1644699446237)
+@@ -1,29 +1,26 @@
+ <resources>
+     <!-- Map Data Preferences -->
+-    <string-array name="map_data_values">
++    <string-array name="data_type_values">
+         <item>canopy_height_model</item>
+         <item>digital_elevation_model</item>
+         <item>above_ground_biomass</item>
+     </string-array>
+ 
++    <string-array name="data_type_entries">
++        <item>Canopy Height Model</item>
++        <item>Digital Elevation Model</item>
++        <item>Above Ground Biomass</item>
++    </string-array>
++
+     <!-- Map Centering Preferences -->
+-    <string-array name="center_entries">
++    <string-array name="center_loc_entries">
+         <item>Device Location</item>
+-        <item>User-Set Location</item>
+-        <item>Offline Location</item>
++        <item>Region of Interest</item>
+     </string-array>
+ 
+-    <string-array name="center_values">
++    <string-array name="center_loc_values">
+         <item>device_location</item>
+-        <item>user_set_location</item>
+-        <item>offline_location</item>
+-    </string-array>
+-
+-    <!-- Map Centering Preferences -->
+-    <string-array name="map_data_entries">
+-        <item>Canopy Height Model</item>
+-        <item>Digital Elevation Model</item>
+-        <item>Above Ground Biomass</item>
++        <item>region_of_interest</item>
+     </string-array>
+ 
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(date 1644698051500)
++++ b/app/src/main/res/values/strings.xml	(date 1644698051500)
+@@ -1,6 +1,19 @@
+ <resources>
+     <string name="app_name">Biomapper</string>
+ 
+-    <string name="center_user_location">center_user_location</string>
++    <!-- Action Menu / Preferences Strings -->
++
++        <!-- Strings visible to the user -->
++    <string name="action_menu_toolbar_title">Action Menu</string>
+ 
++        <!-- Strings used to specify preferences within the code -->
++    <string name="set_data_type">set_data_type</string>
++    <string name="filter_data">filter_data</string>
++
++    <string name="set_roi">set_roi</string>
++    <string name="set_default_center_loc">set_default_center_loc</string>
++
++    <string name="download_roi">download_roi</string>
++    <string name="delete_downloaded_roi">delete_downloaded_roi</string>
++    <string name="enable_offline_mode">enable_offline_mode</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/com/example/biomapper/BaseMap.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/biomapper/BaseMap.java b/app/src/main/java/com/example/biomapper/BaseMap.java
+--- a/app/src/main/java/com/example/biomapper/BaseMap.java	(date 1644704568616)
++++ b/app/src/main/java/com/example/biomapper/BaseMap.java	(date 1644704568616)
+@@ -3,11 +3,17 @@
+ import static android.content.ContentValues.TAG;
+ 
+ import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
++import androidx.core.app.ActivityCompat;
+ import androidx.fragment.app.Fragment;
++import androidx.preference.PreferenceManager;
+ 
++import android.Manifest;
+ import android.content.Context;
+-import android.net.ConnectivityManager;
+-import android.net.NetworkInfo;
++import android.content.ContextWrapper;
++import android.content.pm.PackageManager;
++import android.graphics.Bitmap;
++import android.graphics.BitmapFactory;
+ import android.os.Bundle;
+ import android.util.Log;
+ import android.view.LayoutInflater;
+@@ -23,54 +29,111 @@
+ import com.google.android.gms.maps.model.LatLng;
+ import com.google.android.gms.maps.model.MarkerOptions;
+ import com.google.android.gms.maps.model.Tile;
++import com.google.android.gms.maps.model.TileOverlay;
+ import com.google.android.gms.maps.model.TileOverlayOptions;
+ import com.google.android.gms.maps.model.TileProvider;
+ import com.google.android.gms.maps.model.UrlTileProvider;
+ 
+-import java.io.BufferedOutputStream;
+-import java.io.ByteArrayOutputStream;
+ import java.io.File;
+-import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.io.OutputStream;
++import java.net.HttpURLConnection;
+ import java.net.MalformedURLException;
+ import java.net.URL;
+ 
+ 
+ /**
+- * The base map without any additional content
++ * The base map without any additional content.
++ * Provides a dynamic (navigable) map that displays custom map tiles.
+  */
+ public class BaseMap extends Fragment
+ {
++    // Permission Variables
++    private static final String[] LOCATION_PERMS =
++        { Manifest.permission.ACCESS_FINE_LOCATION,
++        Manifest.permission.ACCESS_COARSE_LOCATION };
++    private static final int REQUEST_CODE = 700;
++
++    // Primary objects for creating the map and connecting to the main activity
+     private GoogleMap mMap;
+     SupportMapFragment mapFragment;
++    MainActivity mainActivity;
++    TileOverlay tileOverlay;
++    TileProvider tileProvider;
+ 
+-    // restrict the zoom level to 5 and 10
++    // Restrict the zoom level to 5 and 13
+     private static final int MIN_ZOOM = 5;
+-    private static final int MAX_ZOOM = 10;
++    private static final int MAX_ZOOM = 13;
+ 
++    // Specifies the size of the map tiles
+     private static final int TILE_WIDTH = 256;
+     private static final int TILE_HEIGHT = 256;
+ 
++    // Strings used for building map tile URLs
++    private static final String BASE_URL_STRING = "https://ceias.nau.edu/capstone/projects/CS/2022/BioSphere/";
++        // originally https://ceias.nau.edu/capstone/projects/CS/2022/BioSphere/gabonChmData/%d/%d/%d.png;
++    private static final String CHM_STRING = "gabonChmData/";
++    private static final String DEM_STRING = "DEM/";
++    private static final String AGB_STRING = "AGB/";
++    private static final String TILE_STRING = "%d/%d/%d.png";
++    public static String dataTypeValue;
++    public static String dataTypeUrlString;
++
++    // Values for determining which tile provider to use
++    private static final int CONNECTED_MODE = 100;
++    private static final int DOWNLOAD_MODE = 101;
++    private static final int OFFLINE_MODE = 102;
++    public static int connectivityMode;
+ 
++
++
++    /**
++     * Called when the map is created.
++     * Ensures that the map data type, connectivity mode, etc. is as specified in the Preferences.
++     */
++    @Override
++    public void onCreate( Bundle savedInstanceState )
++    {
++        super.onCreate( savedInstanceState );
++
++        // Initialize reference to the Main Activity.
++        mainActivity = (MainActivity) getActivity();
++
++        // Set the map data type value according to the Preferences.
++        dataTypeValue = PreferenceManager.
++                getDefaultSharedPreferences( getContext() ).
++                getString( getString( R.string.set_data_type ),"-1");
++        dataTypeUrlString = getDataUrlStringFromValue(dataTypeValue);
++
++        // - - - log statements are to be removed before final release - - -
++        Log.e(TAG,String.format("Initial Data Type: %s", dataTypeUrlString) );
++
++        // TODO Set the connectivity mode according to the preferences.
++        connectivityMode = DOWNLOAD_MODE; //CONNECTED_MODE; // - - - manually set for now - - -
++    }
++
++
++
++    /**
++     * Called after onCreate(). Creates the fragment's view.
++     * Readies the map once is becomes available.
++     */
+     @Override
+     public View onCreateView( LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState )
+     {
+-        // inflate the view
++        // Inflate the view.
+         View view = inflater.inflate( R.layout.fragment_base_map, container, false );
+ 
+-        // initialize map fragment
++        // Initialize the map fragment.
+         mapFragment = (SupportMapFragment)
+-                getChildFragmentManager().findFragmentById( R.id.map );
++                getChildFragmentManager().findFragmentById( R.id.base_map );
+ 
+-        // Async map
++        // Wait until the map is available to apply changes to it.
+         mapFragment.getMapAsync(
+             new OnMapReadyCallback()
+             {
+                 /**
++                 * From Google:
+                  * Manipulates the map once available.
+                  * This callback is triggered when the map is ready to be used.
+                  * This is where we can add markers  or lines, add listeners or move the camera.
+@@ -86,98 +149,402 @@
+             }
+         );
+ 
+-        // return view
++        // Return the view.
+         return view;
+     }
+ 
+ 
++
++    /**
++     * Sets up the map after it becomes available and the view has been created.
++     * Adds the desired functionality to the map.
++     */
+     public void setUpMap( @NonNull GoogleMap googleMap )
+     {
+-        // initialize map variables
++        // Initialize map variable.
+         mMap = googleMap;
++
++        // Set the map type so that Google's typical map tiles are not displayed.
++        // - - - This will be uncommented once we have enough real data - - -
+         //mMap.setMapType( GoogleMap.MAP_TYPE_NONE );
+ 
+-        boolean testingOfflineTileProvider = false;
+-
++        // Set the zoom limitations.
+         mMap.setMinZoomPreference(MIN_ZOOM);
+         mMap.setMaxZoomPreference(MAX_ZOOM);
+ 
+-        // create the standard options to be used by all markers
+-        MarkerOptions stdMarkerOptions = new MarkerOptions()
+-                .icon( BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_AZURE ) ); //HUE_GREEN
++        // Get location permission.
++        if( PackageManager.PERMISSION_GRANTED !=
++                getContext().checkCallingOrSelfPermission( Manifest.permission.ACCESS_FINE_LOCATION ) )
++        {
++            ActivityCompat.requestPermissions( (MainActivity) getActivity(), LOCATION_PERMS, REQUEST_CODE );
++        }
++        // Activate the use of the "set my location" button.
++        // - - - needs to be set to true eventually - - -
++        mMap.setMyLocationEnabled(false);
++        mMap.getUiSettings().setMyLocationButtonEnabled(false);
++
++        // Create the standard options to be used by map markers.
++        MarkerOptions clickedLocationMarkerOptions = new MarkerOptions()
++                .icon( BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_GREEN ) );
++        MarkerOptions regionOfInterestMarkerOptions = new MarkerOptions()
++                .icon( BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_AZURE ) );
++
++        // Add data tiles to the map.
++        addTileOverlay();
++
++        // Add a marker in Libreville.
++        LatLng libreville = new LatLng( 0.4162, 9.4673 );
++        mMap.addMarker( regionOfInterestMarkerOptions.position(libreville).title("Marker in Libreville") );
++
++        // Move camera to Libreville marker.
++        CameraUpdate upd = CameraUpdateFactory.newLatLngZoom( libreville, 6 );
++        mMap.moveCamera( upd );
++    }
++
++
++
++    /**
++     * Checks that the tile server supports the requested x, y and zoom.
++     */
++    private boolean checkTileExists( int x, int y, int zoom )
++    {
++        return ( zoom >= MIN_ZOOM && zoom <= MAX_ZOOM );
++    }
++
++
++
++    /**
++     * Checks if the given URL is valid and links to a resource.
++     */
++    private boolean checkUrlExists( URL url )
++    {
++        int responseCode = -1;
++        try
++        {
++            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
++            urlConnection.setRequestMethod("HEAD");
++            responseCode = urlConnection.getResponseCode();
++        }
++        catch( Exception e )
++        {
++            // - - - Log statements are to be removed before release - - -
++            Log.e(TAG, "Error Checking URL.");
++        }
++
++        return HttpURLConnection.HTTP_OK == responseCode;
++    }
++
++
++
++    /**
++     * Checks if a file of the given name exists in internal storage.
++     */
++    public boolean fileExists( String fileName )
++    {
++        // - - - Log statements are to be removed before release - - -
++        Log.e(TAG, "Checking if File Exists.");
++        File file = getContext().getFileStreamPath( fileName );
++        return file.exists();
++    }
++
++
+ 
+-        // - - - - - Begin creating map tiles - - - - -
+-        TileProvider tileProvider;
+-        if( !testingOfflineTileProvider )
+-        {
+-            tileProvider = new UrlTileProvider( TILE_WIDTH, TILE_HEIGHT )
+-            {
+-                @Override
+-                public synchronized URL getTileUrl( int x, int y, int zoom )
+-                {
+-                    if( !checkTileExists( x, y, zoom ) )
+-                    {
+-                        return null;
+-                    }
++    /**
++     * Retrieves and returns a bitmap image from the given URL.
++     */
++    private Bitmap getBitmapFromUrl( String urlString )
++    {
++        try
++        {
++            URL url = new URL( urlString );
++            Bitmap image = BitmapFactory.decodeStream( url.openConnection().getInputStream() );
++            // - - - Log statements are to be removed before release - - -
++            Log.e(TAG, "Bitmap Retrieved From URL.");
++            return image;
++        }
++        catch( Exception e )
++        {
++            // - - - Log statements are to be removed before release - - -
++            Log.e(TAG, "Error Getting Bitmap from URL.");
++        }
++
++        return null;
++    }
++
++
++
++    /**
++     * Saves the given bitmap image to internal storage based on the given metadata.
++     * Returns the path to where the image was saved.
++     */
++    private String saveToInternalStorage( Bitmap bitmapImage, String dataType, int zoom, int x, int y )
++    {
++        String imageDir = String.format( "%s-%d-%d", dataType, zoom, x );
++        String imageName = String.format( "%d.png", y );
++
++        ContextWrapper contextWrapper = new ContextWrapper( getContext() );
++
++        // Create path to /data/data/app_name/app_data/<data_type>/<zoom>/<x>
++        File directory = contextWrapper.getDir( imageDir, Context.MODE_PRIVATE );
++
++        // Create image at imageDir (<y>.png).
++        File imageFile = new File( directory, imageName );
++
++        FileOutputStream outputStream = null;
++        try
++        {
++            outputStream = new FileOutputStream( imageFile );
++
++            // Use the compress method on the BitMap object to write image to the OutputStream.
++            bitmapImage.compress( Bitmap.CompressFormat.PNG, 100, outputStream );
++        }
++        catch( Exception e )
++        {
++            // - - - Log statements are to be removed before release - - -
++            Log.e(TAG, "Error Adding Image to Internal Storage.");
++            e.printStackTrace();
++        }
++        finally
++        {
++            try
++            {
++                outputStream.flush();
++                outputStream.close();
++            }
++            catch( Exception e )
++            {
++                // - - - Log statements are to be removed before release - - -
++                Log.e(TAG, "Error Closing Output Stream.");
++                e.printStackTrace();
++            }
++        }
++
++        // - - - Log statements are to be removed before release - - -
++        Log.w(TAG, "File Created Successfully.");
++        return directory.getAbsolutePath();
++    }
++
++
++
++    /**
++     * Returns the data type URL string component associated
++     * with the given data type list preference value.
++     */
++    public String getDataUrlStringFromValue( String value )
++    {
++        if( value.equals("canopy_height_model") )
++        {
++            return CHM_STRING;
++        }
++        else if( value.equals("digital_elevation_model") )
++        {
++            return DEM_STRING;
++        }
++        else if( value.equals("above_ground_biomass") )
++        {
++            return AGB_STRING;
++        }
++        return "-1";
++    }
++
++
++
++    /**
++     * Returns a complete URL for a tile of the current data type and
++     * for the given zoom level, x coordinate, and y coordinate.
++     */
++    public String getTileUrlString( int zoom, int x, int y )
++    {
++        return String.format(BASE_URL_STRING + dataTypeUrlString + TILE_STRING, zoom, x, y);
++    }
++
++
++
++    /**
++     * Creates the appropriate tile provider based on the connectivity mode
++     * before adding adding a tile overlay to the map.
++     */
++    public void addTileOverlay()
++    {
++        // Determine which tile provider should be used.
++        if( connectivityMode == CONNECTED_MODE )
++        {
++            tileProvider = new ConnectedTileProvider();
++        }
++        else if( connectivityMode == DOWNLOAD_MODE )
++        {
++            tileProvider = new DownloadTileProvider();
++        }
++        else if( connectivityMode == OFFLINE_MODE )
++        {
++            tileProvider = new OfflineTileProvider();
++        }
++        else
++        {
++            throw new IllegalArgumentException();
++        }
++
++        // Add a til overlay to the map.
++        tileOverlay = mMap.addTileOverlay( new TileOverlayOptions()
++                .tileProvider( tileProvider ) );
++    }
++
++
++
++    /**
++     * Removes the current tile overlay from the map.
++     */
++    public void removeTileOverlay()
++    {
++        // Make the overlay invisible
++        tileOverlay.setVisible(false);
++
++        // Remove the tile overlay from the map.
++        tileOverlay.remove();
++    }
++
++
++
++    /**
++     * Custom tile provider class to be used when online.
++     */
++    private class ConnectedTileProvider extends UrlTileProvider
++    {
++        public ConnectedTileProvider()
++        {
++            super( TILE_WIDTH, TILE_HEIGHT );
++        }
++
++        /**
++         * Gets the URL for the desired tile.
++         */
++        @Override
++        public synchronized URL getTileUrl( int x, int y, int zoom )
++        {
++            if( !checkTileExists( x, y, zoom ) )
++            {
++                return null;
++            }
++
++            // Modify the y tile coordinate to convert from TMS to XYZ tiles.
++            // This is necessary because Google Maps uses XYZ standard tiles
++            // but stored data tiles are of the TMS standard.
++            // - - - This should be able to be removed after we can tile to XYZ coordinates - - -
++            y = ( 1 << zoom ) - y - 1;
++
++            // Build the URL of the map tile based on its zoom, x coordinate, and y coordinate
++            String urlStr = getTileUrlString( zoom, x, y );
++
++            try
++            {
++                return new URL( urlStr );
++            }
++            catch(MalformedURLException e)
++            {
++                throw new AssertionError(e);
++            }
++        }
++    }
++
++
++
++    /**
++     * Custom tile provider class to be used when downloading tiles.
++     */
++    private class DownloadTileProvider extends UrlTileProvider
++    {
++        public DownloadTileProvider()
++        {
++            super( TILE_WIDTH, TILE_HEIGHT );
++        }
++
++        /**
++         * Gets the URL for the desired tile and downloads the tile
++         * it links to if there is one.
++         */
++        @Override
++        public synchronized URL getTileUrl( int x, int y, int zoom )
++        {
++            String dataType = "CHM";
++
++            if( !checkTileExists( x, y, zoom ) )
++            {
++                return null;
++            }
+ 
+-                    // Modify the y tile coordinate to convert from TMS to XYZ tiles.
+-                    // This is necessary because Google Maps uses XYZ standard tiles
+-                    // but stored data tiles are of the TMS standard.
+-                    y = ( 1 << zoom ) - y - 1;
++            // Modify the y tile coordinate to convert from TMS to XYZ tiles.
++            // This is necessary because Google Maps uses XYZ standard tiles
++            // but stored data tiles are of the TMS standard.
++            y = ( 1 << zoom ) - y - 1;
+ 
+-                    // Define the URL pattern for the tile images
+-                    String myUrlStr = String.format("https://ceias.nau.edu/capstone/projects/CS/2022/BioSphere/gabonChmData/%d/%d/%d.png", zoom, x, y);
++            // Build the URL of the map tile based on its zoom, x coordinate, and y coordinate
++            String urlString = getTileUrlString( zoom, x, y );
+ 
+-                    try
+-                    {
+-                        return new URL( myUrlStr );
+-                    }
+-                    catch(MalformedURLException e)
+-                    {
+-                        throw new AssertionError(e);
+-                    }
++            URL url = null;
++            try
++            {
++                url = new URL( urlString );
++            }
++            catch( MalformedURLException e )
++            {
++                throw new AssertionError(e);
++            }
++
++            // Check if a tile exists at the URL
++            if( checkUrlExists( url ) )
++            {
++                // Get bitmap image from URL
++                Bitmap mapTile = getBitmapFromUrl( urlString );
++
++                // Save the image to internal storage
++                String fileLoc = saveToInternalStorage( mapTile, dataType, zoom, x, y );
++
++                // Create the directory where the tile should be stored
++                String dir = String.format( "%s-%d-%d/%d.png", dataType, zoom, x, y );
++
++                /*
++                // - - - BROKEN SECTION - - -
++                if( fileExists( dir ) )
++                {
++                    // - - - Log statements are to be removed before release - - -
++                    Log.e( TAG, "File Exists!" );
+                 }
+-            };
+-        }
+-        else
+-        {
+-            tileProvider = new OfflineTileProvider();
+-        }
++                else
++                {
++                    // - - - Log statements are to be removed before release - - -
++                    Log.e( TAG, "File Does Not Exist!" );
++                } */
+ 
+-        //TileOverlay tileOverlay = // not needed unless need access to a TileOverlay object
+-        mMap.addTileOverlay( new TileOverlayOptions()
+-                .tileProvider( tileProvider ) );
+-        // - - - - - End of tile creation - - - - -
++                // - - - Log statements are to be removed before release - - -
++                Log.e( TAG, "Code passed the fileExists() function" );
+ 
+-        // Add a marker in Libreville
+-        LatLng libreville = new LatLng( 0.4162, 9.4673 );
+-        mMap.addMarker( stdMarkerOptions.position(libreville).title("Marker in Libreville") );
++                // return URL to get the tile for displaying on map
++                return url;
++            }
++            else
++            {
++                // - - - Log statements to be removed before release - - -
++                Log.e(TAG, "No data found at URL.");
++            }
+ 
+-        // Move camera to Libreville marker
+-        CameraUpdate upd = CameraUpdateFactory.newLatLngZoom( libreville, 6 );
+-        mMap.moveCamera( upd );
+-    }
++            return null;
++        }
+ 
++    }
+ 
+-    // Check that the tile server supports the requested x, y and zoom.
+-    private boolean checkTileExists(int x, int y, int zoom)
+-    {
+-        return ( zoom >= MIN_ZOOM && zoom <= MAX_ZOOM );
+-    }
+ 
+ 
+     /**
+-     * provides tiles to the map when in offline mode, downloads them
++     * TODO: Tile provider for loading tiles that are stored on the device.
++     * Custom tile provider class to be used when offline.
+      */
+     private class OfflineTileProvider implements TileProvider
+     {
+-        private static final String TILES_DIR = "data_directory/";
+-
+-        private static final int BUFFER_SIZE_FILE = 16384;
+-        private static final int BUFFER_SIZE_NETWORK = 8192;
+-
+-        private ConnectivityManager connectivityManager;
+-
++        /**
++         * - - - Function to be completed later - - -
++         * Gets the desired tile from internal storage.
++         */
++        @Nullable
+         @Override
+         public Tile getTile( int x, int y, int zoom )
+         {
+@@ -186,87 +553,11 @@
+                 return NO_TILE;
+             }
+ 
+-            // Modify the y tile coordinate to convert from TMS to XYZ tiles.
+-            // Used only for exampleDomain.com !!!
+-            y = ( 1 << zoom ) - y - 1;
+-
+-            // Define the URL pattern for the tile images
+-            String myUrlStr = String.format("https://ceias.nau.edu/capstone/projects/CS/2022/BioSphere/gabonChmData/%d/%d/%d.png", zoom, x, y);
+-            String testUrlStr = String.format("https://tile.openstreetmap.org/%d/%d/%d.png", zoom, x, y);
+-
+-            Log.d( TAG, "getTile( " + x + ", " + y + ", " + zoom + " )" );
+-            try
+-            {
+-                byte[] data;
+-
+-                File file = new File(TILES_DIR + zoom + "/" + x + "/" + y + ".png");
+-
+-                if( file.exists() )
+-                {
+-                    Log.w(TAG, "Tile file found!");
+-                    data = readTile( new FileInputStream(file), BUFFER_SIZE_FILE );
+-                }
+-                else
+-                {
+-                    if( connectivityManager == null )
+-                    {
+-                        connectivityManager = (ConnectivityManager) requireActivity()
+-                                .getSystemService( Context.CONNECTIVITY_SERVICE );
+-                    }
+-                    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+-                    if( activeNetworkInfo == null || !activeNetworkInfo.isConnected() )
+-                    {
+-                        Log.w(TAG, "No network");
+-                        return NO_TILE;
+-                    }
+-
+-                    Log.d( TAG, "Downloading tile" );
+-                    data = readTile( new URL( myUrlStr ).openStream(),
+-                            BUFFER_SIZE_NETWORK );
+-
+-                    try ( OutputStream out = new BufferedOutputStream( new FileOutputStream(file) ) )
+-                    {
+-                        Log.w(TAG, "Writing tile data to file");
+-                        out.write(data);
+-                    }
+-                }
+-
+-                return new Tile( TILE_WIDTH, TILE_HEIGHT, data );
+-            }
+-            catch ( Exception ex )
+-            {
+-                Log.e(TAG, "Error loading tile", ex);
+-                return NO_TILE;
+-            }
+-        }
++            return NO_TILE;
++        }
++    }
+ 
+ 
+-        private byte[] readTile( InputStream in, int bufferSize ) throws IOException
+-        {
+-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+-            try
+-            {
+-                int i;
+-                byte[] data = new byte[bufferSize];
+-
+-                while ( ( i = in.read( data, 0, bufferSize ) ) != -1 )
+-                {
+-                    buffer.write(data, 0, i);
+-                }
+-                buffer.flush();
+-
+-                return buffer.toByteArray();
+-            }
+-            finally
+-            {
+-                in.close();
+-                buffer.close();
+-            }
+-        }
+-
+-    // End of OfflineTileProvider class
+-    }
++}
+ 
+-// End of BaseMap fragment class
+-}
+ 
+Index: app/src/main/java/com/example/biomapper/MainMap.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/biomapper/MainMap.java b/app/src/main/java/com/example/biomapper/MainMap.java
+--- a/app/src/main/java/com/example/biomapper/MainMap.java	(date 1644696960057)
++++ b/app/src/main/java/com/example/biomapper/MainMap.java	(date 1644696960057)
+@@ -1,12 +1,8 @@
+ package com.example.biomapper;
+ 
+-import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
+ import androidx.fragment.app.FragmentManager;
+-import androidx.fragment.app.FragmentTransaction;
+-
+-import com.google.android.gms.maps.SupportMapFragment;
+ 
+ import android.os.Bundle;
+ import android.view.LayoutInflater;
+@@ -16,66 +12,81 @@
+ import com.example.biomapper.databinding.FragmentMainMapBinding;
+ 
+ /**
+- * The home map used for navigation and viewing data
+- * includes a button to open the "Action Menu"
+- * TODO: includes a map key/legend as an image that relates the map color values to the corresponding data values
++ * The map that is initially displayed upon launching the app.
++ * Relies on the Base Map fragment for most of its functionality.
++ * Includes a button to open the Action Menu.
++ * TODO: Includes a map key/legend as an image that relates the map color values to the corresponding data values
+  */
+ public class MainMap extends Fragment
+ {
+     private FragmentMainMapBinding binding;
++    private MainActivity mainActivity;
++    private FragmentManager fragmentManager;
+ 
++
++    /**
++     * Called when the map container is created.
++     * Adds the Base Map to this fragment.
++     */
+     @Override
+     public void onCreate(Bundle savedInstanceState)
+     {
+         super.onCreate(savedInstanceState);
+ 
+-        // open map fragment
+-        getActivity().getSupportFragmentManager().beginTransaction().add( R.id.map, new BaseMap() ).commit();
++        // Initialize reference to Main Activity and the fragment manager.
++        mainActivity = (MainActivity) getActivity();
++        fragmentManager = mainActivity.getSupportFragmentManager();
++
++        // Add the Base Map.
++        fragmentManager.beginTransaction().add( R.id.base_map, mainActivity.baseMap ).commit();
+     }
+ 
++
++
++    /**
++     * Called after onCreate(). Creates the view of the fragment.
++     * Adds functionality to the Action Menu button.
++     */
+     @Nullable
+     @Override
+-    public View onCreateView( LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState )
++    public View onCreateView( LayoutInflater inflater, @Nullable ViewGroup container,
++                              @Nullable Bundle savedInstanceState )
+     {
++        // Bind the Main Map layout to this object.
+         binding = FragmentMainMapBinding.inflate( inflater, container, false );
+-        //binding = FragmentMainMapBinding.inflate( getLayoutInflater() );
+-        //View view = inflater.inflate( R.layout.fragment_main_map, container, false);
+ 
+-        // add functionality to action menu button
++        // Add functionality to action Menu Button.
+         binding.actionMenuButton.setOnClickListener(
+-                new View.OnClickListener()
+-                {
+-                    @Override
+-                    public void onClick( View view )
+-                    {
+-                        // add or show the Action Menu and hide the Main Map
+-                        // this is done instead of replacing the map with the menu so that
+-                        // the map isn't destroyed upon opening the Action Menu
+-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+-
+-                        // if the Action Menu exists, show it
+-                        if( fragmentManager.findFragmentByTag( "action_menu" ) != null )
+-                        {
+-                            fragmentManager.beginTransaction().show( fragmentManager.findFragmentByTag("action_menu") ).commit();
+-                        }
+-                        // else the Action Menu fragment does not exist, add it to fragment manager
+-                        else
+-                        {
+-                            fragmentManager.beginTransaction().add( R.id.fragment_container, new ActionMenu(), "action_menu" ).commit();
+-                        }
+-                        // hide the Main Map and commit changes
+-                        if(fragmentManager.findFragmentByTag("main_map") != null)
+-                        {
+-                            fragmentManager.beginTransaction().hide( fragmentManager.findFragmentByTag("main_map") ).commit();
+-                        }
+-
+-                        //fragmentTransaction.replace( R.id.fragment_container, new ActionMenu() );
+-                        //fragmentTransaction.commit();
+-                    }
+-                }
++            new View.OnClickListener()
++            {
++                /**
++                 * Add or show the Action Menu and hide the Main Map.
++                 * This is done instead of replacing the map with the menu so that
++                 * the map isn't destroyed upon opening the Action Menu.
++                 */
++                @Override
++                public void onClick( View view )
++                {
++                    // If the Action Menu exists, show it.
++                    if( fragmentManager.findFragmentByTag( "action_menu" ) != null )
++                    {
++                       fragmentManager.beginTransaction().show( fragmentManager.findFragmentByTag("action_menu") ).commit();
++                    }
++                    // Else the Action Menu fragment does not exist. Add it to fragment manager.
++                    else
++                    {
++                        fragmentManager.beginTransaction().add( R.id.fragment_container, new ActionMenu(), "action_menu" ).commit();
++                    }
++                    // Hide the Main Map.
++                    if(fragmentManager.findFragmentByTag("main_map") != null)
++                    {
++                        fragmentManager.beginTransaction().hide( fragmentManager.findFragmentByTag("main_map") ).commit();
++                    }
++                }
++            }
+         );
+ 
+-        // return view;
++        // Return the view.
+         return binding.getRoot();
+     }
+ 
+Index: app/src/main/java/com/example/biomapper/ActionMenu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/biomapper/ActionMenu.java b/app/src/main/java/com/example/biomapper/ActionMenu.java
+--- a/app/src/main/java/com/example/biomapper/ActionMenu.java	(date 1644704568628)
++++ b/app/src/main/java/com/example/biomapper/ActionMenu.java	(date 1644704568628)
+@@ -1,48 +1,68 @@
+ package com.example.biomapper;
+ 
++import static android.content.ContentValues.TAG;
++
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.appcompat.widget.Toolbar;
+ import androidx.fragment.app.Fragment;
+ import androidx.fragment.app.FragmentManager;
++import androidx.preference.PreferenceManager;
+ 
++import android.content.SharedPreferences;
+ import android.os.Bundle;
++import android.util.Log;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+ 
+ 
+ /**
+- * The menu containing all settings and possible actions
+- * can navigate back to the Main Map
++ * The menu containing all settings and possible actions.
++ * Relies on the Preferences fragment for most of its functionality.
++ * Has a back button for returning to the Main Map.
+  */
+ public class ActionMenu extends Fragment
+ {
+-    FragmentManager fragmentManager;
++    private MainActivity mainActivity;
++    private FragmentManager fragmentManager;
+ 
+ 
++    /**
++     * Called when the menu is created.
++     * Initializes needed references.
++     */
+     @Override
+     public void onCreate( Bundle savedInstanceState )
+     {
+         super.onCreate( savedInstanceState );
+-        fragmentManager = getActivity().getSupportFragmentManager();
++
++        // Initialize references to Main Activity and the fragment manager.
++        mainActivity = (MainActivity) getActivity();
++        fragmentManager = mainActivity.getSupportFragmentManager();
+     }
+ 
+ 
++
++    /**
++     * Called after onCreate(). Creates the fragment's view.
++     * Applies the appropriate theme and adds the Preferences.
++     */
+     @Override
+     public View onCreateView( LayoutInflater inflater, @Nullable ViewGroup container,
+                               @Nullable Bundle savedInstanceState )
+     {
+-        // add a custom theme to the preferences screen (action menu)
++        // Apply the custom theme for ensuring the desired colors are used.
+         getContext().getTheme().applyStyle( R.style.Theme_Preferences, true );
+ 
+-        // Inflate the layout for this fragment
++        // Inflate the layout for this fragment.
+         View view = inflater.inflate( R.layout.fragment_action_menu, container, false );
+ 
++        // Adds the Preferences layout to the view.
+         if( savedInstanceState == null )
+         {
+             fragmentManager.beginTransaction()
+-                .replace( R.id.actionMenuContent, new Preferences() )
++                .replace( R.id.actionMenuContent, mainActivity.preferences )
+                 .commit();
+         }
+ 
+@@ -50,39 +70,85 @@
+     }
+ 
+ 
++
++    /**
++     * Called after the view has been created.
++     * Adds a toolbar and the functionality for its back button.
++     */
+     @Override
+     public void onViewCreated( @NonNull View view, @Nullable Bundle savedInstanceState )
+     {
+-        // create the toolbar
++        // Create the toolbar.
+         Toolbar toolbar = (Toolbar) view.findViewById( R.id.actionMenuToolbar );
+ 
+-        // add a back button to the toolbar
++        // Add a back button to the toolbar and make it functional.
+         toolbar.setNavigationIcon( getContext().getDrawable(R.drawable.toolbar_back_icon) );
+         toolbar.setNavigationOnClickListener(
+             new View.OnClickListener()
+             {
+-                /* returns the app to the Main Map.
+-                adds or shows the Main Map and hides the Action Menu.
+-                this is done instead of replacing the menu with the map so that
+-                the menu isn't destroyed upon returning to the map
+-                */
++                /**
++                 * Returns the app to the Main Map, applying any changes made
++                 * to the preferences.
++                 * Adds or shows the Main Map and hides the Action Menu.
++                 * This is done instead of replacing the menu with the map so that
++                 * the menu isn't destroyed upon returning to the map.
++                 */
+                 @Override
+                 public void onClick( View view )
+                 {
+-                    // change the theme back to the base theme
++                    // Boolean for determining if the tiles need to be reloaded/updated.
++                    boolean shouldUpdateTiles = false;
++
++                    // Change the theme back to the base theme.
+                     getContext().getTheme().applyStyle( R.style.Theme_Biomapper, true );
+ 
+-                    // if the Main Map exists, show it
++                    // If the map data type has been changed, update the tiles to reflect this.
++                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
++                    BaseMap baseMap = mainActivity.baseMap;
++                    if(
++                            baseMap.dataTypeValue != sharedPreferences.getString( getString( R.string.set_data_type ),"-1")
++                    )
++                    {
++                        // Update the map data type accordingly.
++                        baseMap.dataTypeValue = sharedPreferences.getString( getString( R.string.set_data_type ),"-1");
++                        baseMap.dataTypeUrlString = baseMap.getDataUrlStringFromValue( baseMap.dataTypeValue );
++
++                        // Reload tiles so they're of the new data type.
++                        shouldUpdateTiles = true;
++
++                        // - - - log statements are to be removed before release - - -
++                        Log.e(TAG,String.format("New Data Type: %s", baseMap.dataTypeUrlString) );
++                    }
++
++                    // TODO If offline mode has been enabled, begin using offline tiles instead
++                    if( false )
++                    {
++                        // Update the connectivity mode according to the preferences.
++                        baseMap.connectivityMode = -1;
++
++                        // Reload tiles so the offline ones are used.
++                        shouldUpdateTiles = true;
++                    }
++
++                    // If connectivity changed, data is filtered, or set to offline mode,
++                    // the outdated tiles need to be removed and reloaded.
++                    if( shouldUpdateTiles )
++                    {
++                        baseMap.removeTileOverlay();
++                        baseMap.addTileOverlay();
++                    }
++
++                    // If the Main Map exists, show it.
+                     if( fragmentManager.findFragmentByTag( "main_map" ) != null )
+                     {
+                         fragmentManager.beginTransaction().show( fragmentManager.findFragmentByTag( "main_map" ) ).commit();
+                     }
+-                    // else the Main Map fragment does not exist, add it to fragment manager
++                    // Else the Main Map fragment does not exist. Add it to fragment manager.
+                     else
+                     {
+                         fragmentManager.beginTransaction().add( R.id.fragment_container, new MainMap(), "main_map" ).commit();
+                     }
+-                    // hide the Action Menu and commit changes
++                    // Hide the Action Menu.
+                     if( fragmentManager.findFragmentByTag( "action_menu" ) != null )
+                     {
+                         fragmentManager.beginTransaction().hide( fragmentManager.findFragmentByTag( "action_menu" ) ).commit();
+@@ -90,6 +156,7 @@
+                 }
+             }
+         );
+-    }
++
++    } // End of onViewCreated function.
+ 
+-}
+\ No newline at end of file
++} // End of ActionMenu class.
+\ No newline at end of file
+Index: app/src/main/java/com/example/biomapper/Preferences.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/biomapper/Preferences.java b/app/src/main/java/com/example/biomapper/Preferences.java
+--- a/app/src/main/java/com/example/biomapper/Preferences.java	(date 1644703983801)
++++ b/app/src/main/java/com/example/biomapper/Preferences.java	(date 1644703983801)
+@@ -4,75 +4,97 @@
+ import androidx.preference.PreferenceFragmentCompat;
+ 
+ import android.os.Bundle;
++import android.util.Log;
+ 
+ /**
+- * The the list of settings and possible actions
++ * The the list of settings and possible actions.
+  */
+ public class Preferences extends PreferenceFragmentCompat
+ {
++    private static final String TAG = "PreferenceFragment";
+ 
+     @Override
+     public void onCreatePreferences( Bundle savedInstanceState, String rootKey )
+     {
+-        // set the preferences
++        // Specify the preference screen to be used.
+         setPreferencesFromResource( R.xml.root_preferences, rootKey );
+ 
+-        // add functionality to the button that opens the data-search input
+-        /*Preference button = findPreference( getString( R.string.XXX ) );
+-        button.setOnPreferenceClickListener(
+-                new Preference.OnPreferenceClickListener()
+-                {
+-                    @Override
+-                    public boolean onPreferenceClick(Preference preference)
+-                    {
+-                        // TODO open data searching fragment
+-                        return true;
+-                    }
+-                }
+-        );*/
++        // Add functionality to the button that opens the data filtering fragment.
++        Preference filterDataButton = findPreference( getString( R.string.filter_data ) );
++        filterDataButton.setOnPreferenceClickListener(
++            new Preference.OnPreferenceClickListener()
++            {
++                @Override
++                public boolean onPreferenceClick(Preference preference)
++                {
++                    // TODO Open data filtering fragment
++
++                    // - - - Logs are to be removed before release - - -
++                    Log.e(TAG, "Data filter button pressed!");
++
++                    return true;
++                }
++            }
++        );
+ 
+-        // add functionality to the button that centers the map on the user's location
+-        Preference button = findPreference( getString( R.string.center_user_location ) );
+-        button.setOnPreferenceClickListener(
+-                new Preference.OnPreferenceClickListener()
+-                {
+-                    @Override
+-                    public boolean onPreferenceClick( Preference preference )
+-                    {
+-                        // TODO move the map to the user's current location
+-                        return true;
+-                    }
+-                }
++
++        // Add functionality to the button that lets the user select the region of interest.
++        Preference setRoiButton = findPreference( getString( R.string.set_roi ) );
++        setRoiButton.setOnPreferenceClickListener(
++            new Preference.OnPreferenceClickListener()
++            {
++                @Override
++                public boolean onPreferenceClick(Preference preference)
++                {
++                    // TODO Open a map that lets the user select a region of interest
++
++                    // - - - Logs are to be removed before release - - -
++                    Log.e(TAG, "Set roi button pressed!");
++
++                   return true;
++                }
++            }
+         );
+ 
+-        // add functionality to the button that opens the map for setting the center location
+-        // will only be available if the default center location is set to "user-set location"
+-        /*Preference button = findPreference( getString( R.string.XXX ) );
+-        button.setOnPreferenceClickListener(
+-                new Preference.OnPreferenceClickListener()
+-                {
+-                    @Override
+-                    public boolean onPreferenceClick(Preference preference)
+-                    {
+-                        // TODO open map for setting center area
+-                        return true;
+-                    }
+-                }
+-        );*/
++
++        // Add functionality to the button that downloads tiles that
++        // cover the region of interest to internal storage.
++        Preference downloadRoiButton = findPreference( getString( R.string.download_roi ) );
++        downloadRoiButton.setOnPreferenceClickListener(
++            new Preference.OnPreferenceClickListener()
++            {
++                @Override
++                public boolean onPreferenceClick(Preference preference)
++                {
++                    // TODO Download tiles that cover the roi to internal storage
++
++                    // - - - Logs are to be removed before release - - -
++                    Log.e(TAG, "Download roi button pressed!");
++
++                    return true;
++                }
++            }
++        );
+ 
+-        // add functionality to the button that opens the map for setting the offline area
+-        /*Preference button = findPreference( getString( R.string.XXX ) );
+-        button.setOnPreferenceClickListener(
+-                new Preference.OnPreferenceClickListener()
+-                {
+-                    @Override
+-                    public boolean onPreferenceClick(Preference preference)
+-                    {
+-                        // TODO open map for setting offline area
+-                        return true;
+-                    }
+-                }
+-        );*/
++        // Add functionality to the button that deletes all
++        // downloaded tiles located in internal storage.
++        Preference deleteRoiButton = findPreference( getString( R.string.delete_downloaded_roi ) );
++        deleteRoiButton.setOnPreferenceClickListener(
++            new Preference.OnPreferenceClickListener()
++            {
++                @Override
++                public boolean onPreferenceClick(Preference preference)
++                {
++                    // TODO Delete the local stores located in internal storage
++
++                    // - - - Logs are to be removed before release - - -
++                    Log.e(TAG, "Delete roi button pressed!");
++
++                    return true;
++                }
++            }
++        );
++
+     }
+ 
+ 
+Index: app/src/main/java/com/example/biomapper/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/biomapper/MainActivity.java b/app/src/main/java/com/example/biomapper/MainActivity.java
+--- a/app/src/main/java/com/example/biomapper/MainActivity.java	(date 1644696960050)
++++ b/app/src/main/java/com/example/biomapper/MainActivity.java	(date 1644696960050)
+@@ -1,32 +1,47 @@
+ package com.example.biomapper;
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+-import androidx.fragment.app.FragmentActivity;
+ import androidx.fragment.app.FragmentTransaction;
++import androidx.preference.PreferenceManager;
+ 
+ import android.os.Bundle;
+ 
+-import com.example.biomapper.databinding.ActivityMainBinding;
+-
+-
+ /**
+- * The main activity.
+- * At any point it will be displaying the main map, the action menu, etc.
++ * The main, and only, activity.
++ * The component that is first created when the app is launched.
++ * At any point it will be displaying the Main Map, the Action Menu, etc.
+  */
+ public class MainActivity extends AppCompatActivity
+ {
++    // References to fragments that need to be accessed by other fragments.
++    public Preferences preferences;
++    public BaseMap baseMap;
++
++
++    /**
++     * Called when the activity is created.
++     * Initializes references to fragments and displays the Main Map.
++     */
+     @Override
+     protected void onCreate( Bundle savedInstanceState )
+     {
+-        // call parent class' onCreate function
+         super.onCreate( savedInstanceState );
+ 
+-        // apply the view to the activity's layout
++        // Initialize the Preferences object so that it can be accessed in other fragments.
++        // This must be done before initializing the Base Map!
++        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, true);
++        preferences = new Preferences();
++
++        // Initialize the Base Map so that it can be accessed in other fragments.
++        baseMap = new BaseMap();
++
++        // Apply the view to the activity's layout.
+         setContentView( R.layout.activity_main );
+ 
+-        // create the fragment transaction object
++        // Create the fragment transaction object.
+         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+-        // add the main map fragment to the main activity container
++
++        // Add the Main Map fragment to the main activity container.
+         fragmentTransaction.add( R.id.fragment_container, new MainMap(), "main_map" );
+         fragmentTransaction.commit();
+     }
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(date 1644024796431)
++++ b/app/src/main/AndroidManifest.xml	(date 1644024796431)
+@@ -8,11 +8,12 @@
+          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+          Google Maps Android API v2, but you must specify either coarse or fine
+          location permissions for the "MyLocation" functionality.
+-    <uses-permission android:name="android.permission.INTERNET"/>
++    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
++    <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+     <uses-permission android:name="android.permission.ACCESS_COURSE_LOCATION" />
+-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+-    -->
++
+ 
+     <application
+         android:allowBackup="true"
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(date 1644025946401)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1644025946401)
+@@ -7,11 +7,11 @@
+         <deviceKey>
+           <Key>
+             <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="C:\Users\azdes\.android\avd\Pixel_API_30.avd" />
++            <value value="C:\Users\azdes\.android\avd\Nexus_5X_API_30.avd" />
+           </Key>
+         </deviceKey>
+       </Target>
+     </targetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2022-01-21T19:39:21.401415800Z" />
++    <timeTargetWasSelectedWithDropDown value="2022-02-05T01:52:05.781357100Z" />
+   </component>
+ </project>
+\ No newline at end of file

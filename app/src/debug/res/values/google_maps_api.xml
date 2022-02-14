@@ -1,0 +1,22 @@
+<resources>
+    <!--
+    To get a Google Maps API Key, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=FF:8F:93:DD:25:16:ED:1E:13:48:5F:9F:C5:43:43:63:83:F4:0B:E1%3Bcom.example.biomapper3
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    com.example.biomapper3
+
+    SHA-1 certificate fingerprint:
+    FF:8F:93:DD:25:16:ED:1E:13:48:5F:9F:C5:43:43:63:83:F4:0B:E1
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAt92p8WI9uOT0xxYqWpQ-XQaM2ADEy7mk</string>
+</resources>
