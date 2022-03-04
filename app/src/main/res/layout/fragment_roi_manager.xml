@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/roi_manager"
+    android:tag="roi_manager"
+    tools:context=".RoiManager" >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/roi_manager_toolbar"
+        app:title="@string/set_roi_toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimaryVariant"
+        app:titleTextColor="?attr/colorOnPrimary"
+        android:layout_alignParentTop = "true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:tag="roi_manager_container_layout"
+        tools:context=".RoiManager"
+        android:layout_below="@id/roi_manager_toolbar"
+        android:layout_above="@id/accept_cancel_bar" >
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/roi_manager_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </androidx.fragment.app.FragmentContainerView>
+        <!--
+        <View
+            android:id="@+id/roi_manager_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </View>-->
+    </RelativeLayout>
+
+    <!--
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/roi_manager_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </androidx.fragment.app.FragmentContainerView>
+ -->
+<!--
+    <include layout="@layout/fragment_base_map" />
+
+    <!-
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <include layout="@layout/fragment_base_map" />
+    </FrameLayout>-->
+
+    <LinearLayout
+        android:id="@+id/accept_cancel_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom = "true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/accept_filter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start|bottom"
+                android:background="@null"
+                android:minHeight="48dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/accept_button_img" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/cancel_filter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start|bottom"
+                android:background="@null"
+                android:minHeight="48dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/cancel_button_img" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

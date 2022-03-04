@@ -1,5 +1,7 @@
 package com.example.biomapper;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -11,8 +13,33 @@ import android.util.Log;
  */
 public class Preferences extends PreferenceFragmentCompat
 {
+    MainActivity mainActivity;
+    private FragmentManager fragmentManager;
+
+    // - - - To be deleted along with log statements. - - -
     private static final String TAG = "PreferenceFragment";
 
+
+
+    /**
+     * Called when creating the Preferences.
+     */
+    @Override
+    public void onCreate( Bundle savedInstanceState )
+    {
+        super.onCreate(savedInstanceState);
+
+        // Initialize reference to Main Activity and the fragment manager.
+        mainActivity = (MainActivity) getActivity();
+        fragmentManager = mainActivity.getSupportFragmentManager();
+    }
+
+
+
+    /**
+     * Called once the Preferences have been created.
+     * Adds functionality to the buttons.
+     */
     @Override
     public void onCreatePreferences( Bundle savedInstanceState, String rootKey )
     {
@@ -27,11 +54,7 @@ public class Preferences extends PreferenceFragmentCompat
                 @Override
                 public boolean onPreferenceClick(Preference preference)
                 {
-                    // TODO Open data filtering fragment
-
-                    // - - - Logs are to be removed before release - - -
-                    Log.e(TAG, "Data filter button pressed!");
-
+                    openFilterManager();
                     return true;
                 }
             }
@@ -46,16 +69,11 @@ public class Preferences extends PreferenceFragmentCompat
                 @Override
                 public boolean onPreferenceClick(Preference preference)
                 {
-                    // TODO Open a map that lets the user select a region of interest
-
-                    // - - - Logs are to be removed before release - - -
-                    Log.e(TAG, "Set roi button pressed!");
-
-                   return true;
+                    openRoiManager();
+                    return true;
                 }
             }
         );
-
 
         // Add functionality to the button that downloads tiles that
         // cover the region of interest to internal storage.
@@ -66,11 +84,8 @@ public class Preferences extends PreferenceFragmentCompat
                 @Override
                 public boolean onPreferenceClick(Preference preference)
                 {
-                    // TODO Download tiles that cover the roi to internal storage
-
-                    // - - - Logs are to be removed before release - - -
-                    Log.e(TAG, "Download roi button pressed!");
-
+                    // Download tiles that cover the roi to internal storage
+                    openDownloadManager();
                     return true;
                 }
             }
@@ -85,7 +100,8 @@ public class Preferences extends PreferenceFragmentCompat
                 @Override
                 public boolean onPreferenceClick(Preference preference)
                 {
-                    // TODO Delete the local stores located in internal storage
+                    // TODO Prompt the user to select which data types they want to delete.
+                    // TODO Delete the local tiles for the selected data type(s).
 
                     // - - - Logs are to be removed before release - - -
                     Log.e(TAG, "Delete roi button pressed!");
@@ -95,7 +111,145 @@ public class Preferences extends PreferenceFragmentCompat
             }
         );
 
+        // Add functionality to the button that opens the About Page.
+        Preference aboutPageButton = findPreference( getString( R.string.open_about_page ) );
+        aboutPageButton.setOnPreferenceClickListener(
+                new Preference.OnPreferenceClickListener()
+                {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference)
+                    {
+                        openAboutPage();
+                        return true;
+                    }
+                }
+        );
+
+    } // End of OnCreatePreferences function.
+
+
+
+    /**
+     * Opens the Filter Manager fragment.
+     */
+    private void openFilterManager()
+    {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // If the Filter Data fragment exists, show it.
+        if( fragmentManager.findFragmentByTag( "data_filter" ) != null )
+        {
+            fragmentTransaction.show( fragmentManager.findFragmentByTag("data_filter") );
+        }
+        // Else the Filter Data fragment does not exist. Add it to fragment manager.
+        else
+        {
+            fragmentTransaction.add( R.id.main_activity_container, new FilterManager(), "data_filter" );
+        }
+
+        // Hide the Action Menu.
+        if( fragmentManager.findFragmentByTag("action_menu") != null )
+        {
+            fragmentTransaction.hide( fragmentManager.findFragmentByTag("action_menu") );
+        }
+
+        fragmentTransaction.commit();
     }
 
+
+
+    /**
+     * Opens the Region of Interest Manager fragment. Also makes the Base Map visible.
+     */
+    private void openRoiManager()
+    {
+        mainActivity.baseMap.updateMap();
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // If the Base Map fragment exists, show it.
+        if( fragmentManager.findFragmentByTag( "base_map" ) != null )
+        {
+            fragmentTransaction.show( fragmentManager.findFragmentByTag("base_map") );
+        }
+
+        // If the Roi Selection fragment exists, show it.
+        if( fragmentManager.findFragmentByTag( "roi_manager" ) != null )
+        {
+            fragmentTransaction.show( fragmentManager.findFragmentByTag("roi_manager") );
+        }
+        // Else the Roi Selection fragment does not exist. Add it to fragment manager.
+        else
+        {
+            fragmentTransaction.add( R.id.main_activity_container, new RoiManager(), "roi_manager" );
+        }
+
+        // If the Action Menu exists, hide it.
+        if( fragmentManager.findFragmentByTag("action_menu") != null )
+        {
+            fragmentTransaction.hide( fragmentManager.findFragmentByTag("action_menu") );
+        }
+
+        fragmentTransaction.commit();
+    }
+
+
+
+
+    /**
+     * Opens the Download Manager fragment.
+     */
+    private void openDownloadManager()
+    {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // If the Roi Selection fragment exists, show it.
+        if( fragmentManager.findFragmentByTag( "download_manager" ) != null )
+        {
+            fragmentTransaction.show( fragmentManager.findFragmentByTag("download_manager") );
+        }
+        // Else the Roi Selection fragment does not exist. Add it to fragment manager.
+        else
+        {
+            fragmentTransaction.add( R.id.main_activity_container, new DownloadManager(), "download_manager" );
+        }
+
+        // If the Action Menu exists, hide it.
+        if( fragmentManager.findFragmentByTag("action_menu") != null )
+        {
+            fragmentTransaction.hide( fragmentManager.findFragmentByTag("action_menu") );
+        }
+
+        fragmentTransaction.commit();
+    }
+
+
+
+    /**
+     * Opens the About Page fragment.
+     */
+    private void openAboutPage()
+    {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // If the Roi Selection fragment exists, show it.
+        if( fragmentManager.findFragmentByTag( "about_page" ) != null )
+        {
+            fragmentTransaction.show( fragmentManager.findFragmentByTag("about_page") );
+        }
+        // Else the Roi Selection fragment does not exist. Add it to fragment manager.
+        else
+        {
+            fragmentTransaction.add( R.id.main_activity_container, new AboutPage(), "about_page" );
+        }
+
+        // If the Action Menu exists, hide it.
+        if( fragmentManager.findFragmentByTag("action_menu") != null )
+        {
+            fragmentTransaction.hide( fragmentManager.findFragmentByTag("action_menu") );
+        }
+
+        fragmentTransaction.commit();
+    }
 
 }
