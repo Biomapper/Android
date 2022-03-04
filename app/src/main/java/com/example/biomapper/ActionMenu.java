@@ -1,17 +1,13 @@
 package com.example.biomapper;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.PreferenceManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +22,7 @@ public class ActionMenu extends Fragment
 {
     private MainActivity mainActivity;
     private FragmentManager fragmentManager;
+
 
 
     /**
@@ -45,16 +42,13 @@ public class ActionMenu extends Fragment
 
 
     /**
-     * Called after onCreate(). Creates the fragment's view.
-     * Applies the appropriate theme and adds the Preferences.
+     * Called after onCreate().
+     * Creates the fragment's view and adds the Preferences.
      */
     @Override
     public View onCreateView( LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState )
     {
-        // Apply the custom theme for ensuring the desired colors are used.
-        getContext().getTheme().applyStyle( R.style.Theme_Preferences, true );
-
         // Inflate the layout for this fragment.
         View view = inflater.inflate( R.layout.fragment_action_menu, container, false );
 
@@ -62,7 +56,7 @@ public class ActionMenu extends Fragment
         if( savedInstanceState == null )
         {
             fragmentManager.beginTransaction()
-                .replace( R.id.actionMenuContent, mainActivity.preferences )
+                .replace( R.id.action_menu_container, mainActivity.preferences )
                 .commit();
         }
 
@@ -86,77 +80,52 @@ public class ActionMenu extends Fragment
         toolbar.setNavigationOnClickListener(
             new View.OnClickListener()
             {
-                /**
-                 * Returns the app to the Main Map, applying any changes made
-                 * to the preferences.
-                 * Adds or shows the Main Map and hides the Action Menu.
-                 * This is done instead of replacing the menu with the map so that
-                 * the menu isn't destroyed upon returning to the map.
-                 */
                 @Override
                 public void onClick( View view )
                 {
-                    // Boolean for determining if the tiles need to be reloaded/updated.
-                    boolean shouldUpdateTiles = false;
+                    mainActivity.baseMap.updateMap();
 
-                    // Change the theme back to the base theme.
-                    getContext().getTheme().applyStyle( R.style.Theme_Biomapper, true );
-
-                    // If the map data type has been changed, update the tiles to reflect this.
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
-                    BaseMap baseMap = mainActivity.baseMap;
-                    if(
-                            baseMap.dataTypeValue != sharedPreferences.getString( getString( R.string.set_data_type ),"-1")
-                    )
-                    {
-                        // Update the map data type accordingly.
-                        baseMap.dataTypeValue = sharedPreferences.getString( getString( R.string.set_data_type ),"-1");
-                        baseMap.dataTypeUrlString = baseMap.getDataUrlStringFromValue( baseMap.dataTypeValue );
-
-                        // Reload tiles so they're of the new data type.
-                        shouldUpdateTiles = true;
-
-                        // - - - log statements are to be removed before release - - -
-                        Log.e(TAG,String.format("New Data Type: %s", baseMap.dataTypeUrlString) );
-                    }
-
-                    // TODO If offline mode has been enabled, begin using offline tiles instead
-                    if( false )
-                    {
-                        // Update the connectivity mode according to the preferences.
-                        baseMap.connectivityMode = -1;
-
-                        // Reload tiles so the offline ones are used.
-                        shouldUpdateTiles = true;
-                    }
-
-                    // If connectivity changed, data is filtered, or set to offline mode,
-                    // the outdated tiles need to be removed and reloaded.
-                    if( shouldUpdateTiles )
-                    {
-                        baseMap.removeTileOverlay();
-                        baseMap.addTileOverlay();
-                    }
-
-                    // If the Main Map exists, show it.
-                    if( fragmentManager.findFragmentByTag( "main_map" ) != null )
-                    {
-                        fragmentManager.beginTransaction().show( fragmentManager.findFragmentByTag( "main_map" ) ).commit();
-                    }
-                    // Else the Main Map fragment does not exist. Add it to fragment manager.
-                    else
-                    {
-                        fragmentManager.beginTransaction().add( R.id.fragment_container, new MainMap(), "main_map" ).commit();
-                    }
-                    // Hide the Action Menu.
-                    if( fragmentManager.findFragmentByTag( "action_menu" ) != null )
-                    {
-                        fragmentManager.beginTransaction().hide( fragmentManager.findFragmentByTag( "action_menu" ) ).commit();
-                    }
+                    openMainMap();
                 }
             }
         );
 
     } // End of onViewCreated function.
+
+
+
+    /**
+     * Show the already existing Base Map, show or add the Main Map, and hide the Action Menu.
+     * This is done so the Base Map isn't re-created every time the user returns to the Main Map.
+     */
+    private void openMainMap()
+    {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Show the Base Map.
+        if( mainActivity.baseMap != null )
+        {
+            fragmentTransaction.show( mainActivity.baseMap );
+        }
+
+        // If the Main Map exists, show it.
+        if( fragmentManager.findFragmentByTag( "main_map" ) != null )
+        {
+            fragmentTransaction.show( fragmentManager.findFragmentByTag( "main_map" ) );
+        }
+        // Else the Main Map fragment does not exist. Add it to fragment manager.
+        else
+        {
+            fragmentTransaction.add( R.id.main_activity_container, new MainMap(), "main_map" );
+        }
+
+        // If the Action Menu exists, hide it.
+        if( fragmentManager.findFragmentByTag( "action_menu" ) != null )
+        {
+            fragmentTransaction.hide( fragmentManager.findFragmentByTag( "action_menu" ) );
+        }
+
+        fragmentTransaction.commit();
+    }
 
 } // End of ActionMenu class.

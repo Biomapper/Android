@@ -1,8 +1,10 @@
 package com.example.biomapper;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.biomapper.databinding.FragmentMainMapBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * The map that is initially displayed upon launching the app.
@@ -22,6 +25,7 @@ public class MainMap extends Fragment
     private FragmentMainMapBinding binding;
     private MainActivity mainActivity;
     private FragmentManager fragmentManager;
+
 
 
     /**
@@ -38,7 +42,7 @@ public class MainMap extends Fragment
         fragmentManager = mainActivity.getSupportFragmentManager();
 
         // Add the Base Map.
-        fragmentManager.beginTransaction().add( R.id.base_map, mainActivity.baseMap ).commit();
+        //fragmentManager.beginTransaction().add( R.id.base_map, mainActivity.baseMap ).commit();
     }
 
 
@@ -52,42 +56,65 @@ public class MainMap extends Fragment
     public View onCreateView( LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState )
     {
-        // Bind the Main Map layout to this object.
-        binding = FragmentMainMapBinding.inflate( inflater, container, false );
-
-        // Add functionality to action Menu Button.
-        binding.actionMenuButton.setOnClickListener(
-            new View.OnClickListener()
-            {
-                /**
-                 * Add or show the Action Menu and hide the Main Map.
-                 * This is done instead of replacing the map with the menu so that
-                 * the map isn't destroyed upon opening the Action Menu.
-                 */
-                @Override
-                public void onClick( View view )
-                {
-                    // If the Action Menu exists, show it.
-                    if( fragmentManager.findFragmentByTag( "action_menu" ) != null )
-                    {
-                       fragmentManager.beginTransaction().show( fragmentManager.findFragmentByTag("action_menu") ).commit();
-                    }
-                    // Else the Action Menu fragment does not exist. Add it to fragment manager.
-                    else
-                    {
-                        fragmentManager.beginTransaction().add( R.id.fragment_container, new ActionMenu(), "action_menu" ).commit();
-                    }
-                    // Hide the Main Map.
-                    if(fragmentManager.findFragmentByTag("main_map") != null)
-                    {
-                        fragmentManager.beginTransaction().hide( fragmentManager.findFragmentByTag("main_map") ).commit();
-                    }
-                }
-            }
-        );
+        // Inflate the layout for this fragment.
+        View view = inflater.inflate( R.layout.fragment_main_map, container, false );
 
         // Return the view.
-        return binding.getRoot();
+        return view;
+    }
+
+
+
+    /**
+     * Called after the view has been created.
+     * Adds a toolbar and the functionality for its back button.
+     */
+    @Override
+    public void onViewCreated( @NonNull View view, @Nullable Bundle savedInstanceState )
+    {
+        // Add functionality to action Menu Button.
+        FloatingActionButton actionMenuButton = mainActivity.findViewById( R.id.actionMenuButton );
+        actionMenuButton.setOnClickListener(
+                new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick( View view )
+                    {
+                        openActionMenu();
+                    }
+                }
+        );
+    }
+
+
+
+    /**
+     * Add or show the Action Menu and hide the Main Map.
+     * This is done instead of replacing the Main Map with the menu so that
+     * the Base Map isn't destroyed each time the Action Menu is opened.
+     */
+    private void openActionMenu()
+    {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // If the Action Menu exists, show it.
+        if( fragmentManager.findFragmentByTag( "action_menu" ) != null )
+        {
+            fragmentTransaction.show( fragmentManager.findFragmentByTag("action_menu") );
+        }
+        // Else the Action Menu fragment does not exist. Add it to fragment manager.
+        else
+        {
+            fragmentTransaction.add( R.id.main_activity_container, new ActionMenu(), "action_menu" );
+        }
+
+        // Hide the Main Map.
+        if( fragmentManager.findFragmentByTag( "main_map" ) != null)
+        {
+            fragmentTransaction.hide( fragmentManager.findFragmentByTag( "main_map" ) );
+        }
+
+        fragmentTransaction.commit();
     }
 
 }

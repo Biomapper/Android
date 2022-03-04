@@ -13,9 +13,12 @@ import android.os.Bundle;
  */
 public class MainActivity extends AppCompatActivity
 {
+    FragmentTransaction fragmentTransaction;
+
     // References to fragments that need to be accessed by other fragments.
     public Preferences preferences;
     public BaseMap baseMap;
+
 
 
     /**
@@ -39,10 +42,12 @@ public class MainActivity extends AppCompatActivity
         setContentView( R.layout.activity_main );
 
         // Create the fragment transaction object.
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         // Add the Main Map fragment to the main activity container.
-        fragmentTransaction.add( R.id.fragment_container, new MainMap(), "main_map" );
+        fragmentTransaction.add( R.id.main_activity_container, new MainMap(), "main_map" );
+        fragmentTransaction.replace( R.id.main_map_container, baseMap, "base_map" );
+
         fragmentTransaction.commit();
     }
 

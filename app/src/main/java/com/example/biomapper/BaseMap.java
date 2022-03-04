@@ -9,11 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,9 +31,6 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
 import com.google.android.gms.maps.model.UrlTileProvider;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -47,42 +41,59 @@ import java.net.URL;
  */
 public class BaseMap extends Fragment
 {
-    // Permission Variables
+    // Permission Variables.
     private static final String[] LOCATION_PERMS =
         { Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION };
     private static final int REQUEST_CODE = 700;
 
-    // Primary objects for creating the map and connecting to the main activity
+    // Primary objects for creating the map and connecting to the main activity.
     private GoogleMap mMap;
-    SupportMapFragment mapFragment;
-    MainActivity mainActivity;
-    TileOverlay tileOverlay;
-    TileProvider tileProvider;
+    private SupportMapFragment mapFragment;
+    private MainActivity mainActivity;
+    private TileOverlay tileOverlay;
+    private TileProvider tileProvider;
 
-    // Restrict the zoom level to 5 and 13
+    // Restrict the zoom level to 5 and 13.
+    // - - - Once a complete set of tiles is added to the server, change to 5 to 13 - - -
     private static final int MIN_ZOOM = 5;
-    private static final int MAX_ZOOM = 13;
+    private static final int MAX_ZOOM = 10;
 
-    // Specifies the size of the map tiles
+    // Specifies the size of the map tiles.
     private static final int TILE_WIDTH = 256;
     private static final int TILE_HEIGHT = 256;
 
-    // Strings used for building map tile URLs
-    private static final String BASE_URL_STRING = "https://ceias.nau.edu/capstone/projects/CS/2022/BioSphere/";
-        // originally https://ceias.nau.edu/capstone/projects/CS/2022/BioSphere/gabonChmData/%d/%d/%d.png;
-    private static final String CHM_STRING = "gabonChmData/";
-    private static final String DEM_STRING = "DEM/";
-    private static final String AGB_STRING = "AGB/";
-    private static final String TILE_STRING = "%d/%d/%d.png";
-    public static String dataTypeValue;
-    public static String dataTypeUrlString;
+    // Values used for setting the map data type.
+    private static final int CHM_CODE = 100;
+    private static final int DEM_CODE = 101;
+    private static final int AGB_CODE = 102;
+    private static String dataTypeValue;
+    public static int dataTypeCode;
 
-    // Values for determining which tile provider to use
-    private static final int CONNECTED_MODE = 100;
-    private static final int DOWNLOAD_MODE = 101;
-    private static final int OFFLINE_MODE = 102;
+    // Strings used for building map tile URLs.
+    // - - - TODO Update tile server IP address - - -
+    private static final String BASE_ROOT_STRING = "http://3.16.10.92/base-tiles/";
+    private static final String FILTER_ROOT_STRING = "http://3.16.10.92:3000/base-tiles/";
+
+    private static final String CHM_STRING = "chm/";
+    private static final String DEM_STRING = "dem/";
+    private static final String AGB_STRING = "agb/";
+    private static String dataTypeUrlString;
+
+    private static final String BASE_TILE_STRING = "%d/%d/%d.png";
+    private static final String FILTER_TILE_STRING = "%d/%d/%d/%d/%d";
+
+    // Values for determining which tile provider to use.
+    private static final int CONNECTED_MODE = 200;
+    private static final int OFFLINE_MODE = 201;
     public static int connectivityMode;
+
+    // Values for determining if data filter/modified tiles should be used.
+    private static final int NO_FILTER_VALUE = -1;
+    public static boolean filterSet;
+    public static boolean filterChanged;
+    public static int minFilterValue;
+    public static int maxFilterValue;
 
 
 
@@ -98,17 +109,47 @@ public class BaseMap extends Fragment
         // Initialize reference to the Main Activity.
         mainActivity = (MainActivity) getActivity();
 
-        // Set the map data type value according to the Preferences.
-        dataTypeValue = PreferenceManager.
-                getDefaultSharedPreferences( getContext() ).
-                getString( getString( R.string.set_data_type ),"-1");
-        dataTypeUrlString = getDataUrlStringFromValue(dataTypeValue);
+        // Initialize reference to the shared preferences.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
 
-        // - - - log statements are to be removed before final release - - -
-        Log.e(TAG,String.format("Initial Data Type: %s", dataTypeUrlString) );
+        // Set the map data type value according to the preferences.
+        dataTypeValue = sharedPreferences
+                .getString( getString( R.string.set_data_type ),"-1");
+        setDataType( dataTypeValue );
 
-        // TODO Set the connectivity mode according to the preferences.
-        connectivityMode = DOWNLOAD_MODE; //CONNECTED_MODE; // - - - manually set for now - - -
+        // Set the data filter according to the preferences.
+        if( dataTypeCode == CHM_CODE &&
+                sharedPreferences.getBoolean( getString( R.string.chm_filter_set ), false ) )
+        {
+            setFilterValues( sharedPreferences, getString(R.string.chm_filter_min), getString(R.string.chm_filter_max) );
+        }
+        else if( dataTypeCode == DEM_CODE &&
+                sharedPreferences.getBoolean( getString( R.string.dem_filter_set ), false ) )
+        {
+            setFilterValues( sharedPreferences, getString(R.string.dem_filter_min), getString(R.string.dem_filter_max) );
+        }
+        else if( dataTypeCode == AGB_CODE &&
+                sharedPreferences.getBoolean( getString( R.string.agb_filter_set ), false ) )
+        {
+            setFilterValues( sharedPreferences, getString(R.string.agb_filter_min), getString(R.string.agb_filter_max) );
+        }
+        else
+        {
+            filterSet = false;
+            minFilterValue = NO_FILTER_VALUE;
+            maxFilterValue = NO_FILTER_VALUE;
+        }
+        filterChanged = false;
+
+        // Set the connectivity mode according to the preferences.
+        if( sharedPreferences.getBoolean( getString( R.string.enable_offline_mode ), false ) )
+        {
+            connectivityMode = OFFLINE_MODE;
+        }
+        else
+        {
+            connectivityMode = CONNECTED_MODE;
+        }
     }
 
 
@@ -126,20 +167,14 @@ public class BaseMap extends Fragment
 
         // Initialize the map fragment.
         mapFragment = (SupportMapFragment)
-                getChildFragmentManager().findFragmentById( R.id.base_map );
+                getChildFragmentManager().findFragmentById( R.id.base_map_fragment );
 
         // Wait until the map is available to apply changes to it.
         mapFragment.getMapAsync(
             new OnMapReadyCallback()
             {
                 /**
-                 * From Google:
-                 * Manipulates the map once available.
                  * This callback is triggered when the map is ready to be used.
-                 * This is where we can add markers  or lines, add listeners or move the camera.
-                 * If Google Play services is not installed on the device, the user will be prompted to install
-                 * it inside the SupportMapFragment. This method will only be triggered once the user has
-                 * installed Google Play services and returned to the app.
                  */
                 @Override
                 public void onMapReady( @NonNull GoogleMap googleMap )
@@ -158,6 +193,7 @@ public class BaseMap extends Fragment
     /**
      * Sets up the map after it becomes available and the view has been created.
      * Adds the desired functionality to the map.
+     * This is where we can add markers or lines, add listeners, or move the camera.
      */
     public void setUpMap( @NonNull GoogleMap googleMap )
     {
@@ -204,165 +240,182 @@ public class BaseMap extends Fragment
 
 
     /**
-     * Checks that the tile server supports the requested x, y and zoom.
+     * Called when the map is re-opened.
+     * Updates map components if any changes were made since the map was last opened.
      */
-    private boolean checkTileExists( int x, int y, int zoom )
+    public void updateMap()
     {
-        return ( zoom >= MIN_ZOOM && zoom <= MAX_ZOOM );
-    }
+        // Boolean for determining if the tiles need to be reloaded/updated.
+        boolean shouldUpdateTiles = false;
+
+        // Initialize reference to the shared preferences.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
+
+        // If the map data type has been changed, begin using tiles of that type.
+        if( dataTypeValue != sharedPreferences.getString( getString( R.string.set_data_type ),"-1") )
+        {
+            // Update the map data type accordingly.
+            dataTypeValue = sharedPreferences.getString( getString( R.string.set_data_type ),"-1");
+            setDataType( dataTypeValue );
+
+            // Reload tiles so they're of the new data type.
+            shouldUpdateTiles = true;
+        }
+
+        // Apply any changes that might've been made to the filter.
+        if( dataTypeCode == CHM_CODE && applyFilterChanges(sharedPreferences, getString(R.string.chm_filter_set),
+                getString(R.string.chm_filter_min), getString(R.string.chm_filter_max) ) )
+        {
+            shouldUpdateTiles = true;
+        }
+        else if( dataTypeCode == DEM_CODE && applyFilterChanges( sharedPreferences, getString( R.string.dem_filter_set ),
+                getString( R.string.dem_filter_min ), getString( R.string.dem_filter_max ) ) )
+        {
+            shouldUpdateTiles = true;
+        }
+        else if( dataTypeCode == AGB_CODE && applyFilterChanges( sharedPreferences, getString( R.string.agb_filter_set ),
+                getString( R.string.agb_filter_min ), getString( R.string.agb_filter_max ) ) )
+        {
+            shouldUpdateTiles = true;
+        }
+
+
+        // If currently using online tiles but offline mode has been enabled,
+        // begin using offline tiles instead.
+        if( connectivityMode == CONNECTED_MODE && sharedPreferences.getBoolean( getString( R.string.enable_offline_mode ), false ) )
+        {
+            // Update the connectivity mode according to the preferences.
+            connectivityMode = OFFLINE_MODE;
+
+            // Reload tiles so the offline ones are used.
+            shouldUpdateTiles = true;
+        }
+        // Else if currently using offline tiles but offline mode has been disabled,
+        // begin using online tiles instead.
+        else if( connectivityMode == OFFLINE_MODE && !sharedPreferences.getBoolean( getString( R.string.enable_offline_mode ), false ) )
+        {
+            // Update the connectivity mode according to the preferences.
+            connectivityMode = CONNECTED_MODE;
+
+            // Reload tiles so the offline ones are used.
+            shouldUpdateTiles = true;
+        }
+
+        // If new data type selected, data is filtered, or offline mode changed,
+        // the outdated tiles need to be removed and reloaded.
+        if( shouldUpdateTiles )
+        {
+            removeTileOverlay();
+            addTileOverlay();
+        }
+
+    } // End of Update Map function.
 
 
 
     /**
-     * Checks if the given URL is valid and links to a resource.
+     * Attempts to apply any changes made to the filter.
+     * Returns whether changes were applied or not.
      */
-    private boolean checkUrlExists( URL url )
+    private boolean applyFilterChanges( SharedPreferences sharedPreferences, String setKey, String minKey, String maxKey )
     {
-        int responseCode = -1;
-        try
+        // Check if filter set state has been changed.
+        if( filterSet != sharedPreferences.getBoolean( setKey, false ) )
         {
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("HEAD");
-            responseCode = urlConnection.getResponseCode();
-        }
-        catch( Exception e )
-        {
-            // - - - Log statements are to be removed before release - - -
-            Log.e(TAG, "Error Checking URL.");
-        }
+            // Update the filter set state.
+            filterSet = sharedPreferences.getBoolean( setKey, false );
 
-        return HttpURLConnection.HTTP_OK == responseCode;
-    }
-
-
-
-    /**
-     * Checks if a file of the given name exists in internal storage.
-     */
-    public boolean fileExists( String fileName )
-    {
-        // - - - Log statements are to be removed before release - - -
-        Log.e(TAG, "Checking if File Exists.");
-        File file = getContext().getFileStreamPath( fileName );
-        return file.exists();
-    }
-
-
-
-    /**
-     * Retrieves and returns a bitmap image from the given URL.
-     */
-    private Bitmap getBitmapFromUrl( String urlString )
-    {
-        try
-        {
-            URL url = new URL( urlString );
-            Bitmap image = BitmapFactory.decodeStream( url.openConnection().getInputStream() );
-            // - - - Log statements are to be removed before release - - -
-            Log.e(TAG, "Bitmap Retrieved From URL.");
-            return image;
-        }
-        catch( Exception e )
-        {
-            // - - - Log statements are to be removed before release - - -
-            Log.e(TAG, "Error Getting Bitmap from URL.");
-        }
-
-        return null;
-    }
-
-
-
-    /**
-     * Saves the given bitmap image to internal storage based on the given metadata.
-     * Returns the path to where the image was saved.
-     */
-    private String saveToInternalStorage( Bitmap bitmapImage, String dataType, int zoom, int x, int y )
-    {
-        String imageDir = String.format( "%s-%d-%d", dataType, zoom, x );
-        String imageName = String.format( "%d.png", y );
-
-        ContextWrapper contextWrapper = new ContextWrapper( getContext() );
-
-        // Create path to /data/data/app_name/app_data/<data_type>/<zoom>/<x>
-        File directory = contextWrapper.getDir( imageDir, Context.MODE_PRIVATE );
-
-        // Create image at imageDir (<y>.png).
-        File imageFile = new File( directory, imageName );
-
-        FileOutputStream outputStream = null;
-        try
-        {
-            outputStream = new FileOutputStream( imageFile );
-
-            // Use the compress method on the BitMap object to write image to the OutputStream.
-            bitmapImage.compress( Bitmap.CompressFormat.PNG, 100, outputStream );
-        }
-        catch( Exception e )
-        {
-            // - - - Log statements are to be removed before release - - -
-            Log.e(TAG, "Error Adding Image to Internal Storage.");
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
+            // Check if the filter has been set.
+            if( filterSet )
             {
-                outputStream.flush();
-                outputStream.close();
+                minFilterValue = sharedPreferences.getInt( minKey, NO_FILTER_VALUE );
+                maxFilterValue = sharedPreferences.getInt( maxKey, NO_FILTER_VALUE );
             }
-            catch( Exception e )
+            // Else the filter has been removed.
+            else
             {
-                // - - - Log statements are to be removed before release - - -
-                Log.e(TAG, "Error Closing Output Stream.");
-                e.printStackTrace();
+                minFilterValue = NO_FILTER_VALUE;
+                maxFilterValue = NO_FILTER_VALUE;
             }
+
+            // Return that changes to the filter were made.
+            return true;
+        }
+        // Else check if filter values have been changed.
+        else if(
+                minFilterValue != sharedPreferences.getInt( minKey, NO_FILTER_VALUE) ||
+                        maxFilterValue != sharedPreferences.getInt( maxKey, NO_FILTER_VALUE )
+        )
+        {
+            // Update filter values.
+            minFilterValue = sharedPreferences.getInt( minKey, NO_FILTER_VALUE);
+            maxFilterValue = sharedPreferences.getInt( maxKey, NO_FILTER_VALUE);
+
+            // Return that changes to the filter were made.
+            return true;
         }
 
-        // - - - Log statements are to be removed before release - - -
-        Log.w(TAG, "File Created Successfully.");
-        return directory.getAbsolutePath();
+        // Else no changes have been made to the filter.
+        return false;
     }
 
 
 
     /**
-     * Returns the data type URL string component associated
-     * with the given data type list preference value.
+     * Sets the local filter values based on the Shared Preferences.
      */
-    public String getDataUrlStringFromValue( String value )
+    private void setFilterValues( SharedPreferences sharedPreferences, String minKey, String maxKey )
+    {
+        filterSet = true;
+        minFilterValue = sharedPreferences.getInt( minKey, NO_FILTER_VALUE);
+        maxFilterValue = sharedPreferences.getInt( maxKey, NO_FILTER_VALUE);
+    }
+
+
+
+    /**
+     * Sets the map data type according to the Preferences.
+     */
+    public void setDataType( String value )
     {
         if( value.equals("canopy_height_model") )
         {
-            return CHM_STRING;
+            dataTypeCode = CHM_CODE;
+            dataTypeUrlString = CHM_STRING;
         }
         else if( value.equals("digital_elevation_model") )
         {
-            return DEM_STRING;
+            dataTypeCode = DEM_CODE;
+            dataTypeUrlString = DEM_STRING;
         }
         else if( value.equals("above_ground_biomass") )
         {
-            return AGB_STRING;
+            dataTypeCode = AGB_CODE;
+            dataTypeUrlString = AGB_STRING;
         }
-        return "-1";
     }
 
 
 
     /**
-     * Returns a complete URL for a tile of the current data type and
-     * for the given zoom level, x coordinate, and y coordinate.
+     * Returns a complete URL for a tile for the given data type,
+     * filter state, zoom level, x coordinate, and y coordinate.
      */
-    public String getTileUrlString( int zoom, int x, int y )
+    public static String getTileUrlString( boolean filterSet, String dataTypeUrlString, int zoom, int x, int y )
     {
-        return String.format(BASE_URL_STRING + dataTypeUrlString + TILE_STRING, zoom, x, y);
+        if( filterSet )
+        {
+            return String.format( FILTER_ROOT_STRING + dataTypeUrlString + FILTER_TILE_STRING,
+                    zoom, x, y, minFilterValue, maxFilterValue );
+        }
+        return String.format( BASE_ROOT_STRING + dataTypeUrlString + BASE_TILE_STRING, zoom, x, y );
     }
 
 
 
     /**
      * Creates the appropriate tile provider based on the connectivity mode
-     * before adding adding a tile overlay to the map.
+     * before adding a tile overlay to the map.
      */
     public void addTileOverlay()
     {
@@ -371,20 +424,12 @@ public class BaseMap extends Fragment
         {
             tileProvider = new ConnectedTileProvider();
         }
-        else if( connectivityMode == DOWNLOAD_MODE )
-        {
-            tileProvider = new DownloadTileProvider();
-        }
         else if( connectivityMode == OFFLINE_MODE )
         {
             tileProvider = new OfflineTileProvider();
         }
-        else
-        {
-            throw new IllegalArgumentException();
-        }
 
-        // Add a til overlay to the map.
+        // Add a tile overlay to the map.
         tileOverlay = mMap.addTileOverlay( new TileOverlayOptions()
                 .tileProvider( tileProvider ) );
     }
@@ -421,11 +466,6 @@ public class BaseMap extends Fragment
         @Override
         public synchronized URL getTileUrl( int x, int y, int zoom )
         {
-            if( !checkTileExists( x, y, zoom ) )
-            {
-                return null;
-            }
-
             // Modify the y tile coordinate to convert from TMS to XYZ tiles.
             // This is necessary because Google Maps uses XYZ standard tiles
             // but stored data tiles are of the TMS standard.
@@ -433,7 +473,7 @@ public class BaseMap extends Fragment
             y = ( 1 << zoom ) - y - 1;
 
             // Build the URL of the map tile based on its zoom, x coordinate, and y coordinate
-            String urlStr = getTileUrlString( zoom, x, y );
+            String urlStr = getTileUrlString( filterSet, dataTypeUrlString, zoom, x, y );
 
             try
             {
@@ -444,93 +484,7 @@ public class BaseMap extends Fragment
                 throw new AssertionError(e);
             }
         }
-    }
-
-
-
-    /**
-     * Custom tile provider class to be used when downloading tiles.
-     */
-    private class DownloadTileProvider extends UrlTileProvider
-    {
-        public DownloadTileProvider()
-        {
-            super( TILE_WIDTH, TILE_HEIGHT );
-        }
-
-        /**
-         * Gets the URL for the desired tile and downloads the tile
-         * it links to if there is one.
-         */
-        @Override
-        public synchronized URL getTileUrl( int x, int y, int zoom )
-        {
-            String dataType = "CHM";
-
-            if( !checkTileExists( x, y, zoom ) )
-            {
-                return null;
-            }
-
-            // Modify the y tile coordinate to convert from TMS to XYZ tiles.
-            // This is necessary because Google Maps uses XYZ standard tiles
-            // but stored data tiles are of the TMS standard.
-            y = ( 1 << zoom ) - y - 1;
-
-            // Build the URL of the map tile based on its zoom, x coordinate, and y coordinate
-            String urlString = getTileUrlString( zoom, x, y );
-
-            URL url = null;
-            try
-            {
-                url = new URL( urlString );
-            }
-            catch( MalformedURLException e )
-            {
-                throw new AssertionError(e);
-            }
-
-            // Check if a tile exists at the URL
-            if( checkUrlExists( url ) )
-            {
-                // Get bitmap image from URL
-                Bitmap mapTile = getBitmapFromUrl( urlString );
-
-                // Save the image to internal storage
-                String fileLoc = saveToInternalStorage( mapTile, dataType, zoom, x, y );
-
-                // Create the directory where the tile should be stored
-                String dir = String.format( "%s-%d-%d/%d.png", dataType, zoom, x, y );
-
-                /*
-                // - - - BROKEN SECTION - - -
-                if( fileExists( dir ) )
-                {
-                    // - - - Log statements are to be removed before release - - -
-                    Log.e( TAG, "File Exists!" );
-                }
-                else
-                {
-                    // - - - Log statements are to be removed before release - - -
-                    Log.e( TAG, "File Does Not Exist!" );
-                } */
-
-                // - - - Log statements are to be removed before release - - -
-                Log.e( TAG, "Code passed the fileExists() function" );
-
-                // return URL to get the tile for displaying on map
-                return url;
-            }
-            else
-            {
-                // - - - Log statements to be removed before release - - -
-                Log.e(TAG, "No data found at URL.");
-            }
-
-            return null;
-        }
-
-    }
+    } // End of Connected Tile Provider class.
 
 
 
@@ -548,16 +502,13 @@ public class BaseMap extends Fragment
         @Override
         public Tile getTile( int x, int y, int zoom )
         {
-            if( !checkTileExists( x, y, zoom ) )
-            {
-                return NO_TILE;
-            }
 
             return NO_TILE;
         }
-    }
+    } // End of Offline Tile Provider class.
 
 
-}
+
+} // End of Base Map class.
 
 
