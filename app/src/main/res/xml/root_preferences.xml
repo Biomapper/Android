@@ -5,70 +5,72 @@
     android:id="@+id/preferences">
 
 
-    <PreferenceCategory app:title="Map Data">
+    <PreferenceCategory app:title="@string/map_data_category_title">
         <ListPreference
-            app:title="Select Map Data Type"
             app:key="@string/set_data_type"
-            app:defaultValue="canopy_height_model"
+            android:icon="@drawable/set_data_type_icon"
+            app:defaultValue="@string/canopy_height_model"
             app:entries="@array/data_type_entries"
             app:entryValues="@array/data_type_values"
-            app:useSimpleSummaryProvider="true"
-            android:icon="@drawable/set_data_type_icon"/>
+            app:title="@string/set_data_type_title"
+            app:useSimpleSummaryProvider="true" />
 
         <Preference
-            android:title="Data Filters"
             android:key="@string/filter_data"
-            android:summary="Specify a range of filter values"
-            android:icon="@drawable/filter_data_icon"/>
+            android:icon="@drawable/filter_data_icon"
+            android:title="@string/filter_data_title"
+            android:summary="@string/filter_data_summary"/>
+
+        <SwitchPreferenceCompat
+            android:key="@string/show_color_bar"
+            android:icon="@drawable/color_bar_icon"
+            android:defaultValue="true"
+            app:title="@string/color_bar_title"
+            app:summaryOff="@string/color_bar_off_summary"
+            app:summaryOn="@string/color_bar_on_summary" />
     </PreferenceCategory>
 
 
-    <PreferenceCategory app:title="Map Locations">
+    <PreferenceCategory app:title="@string/map_locations_category_title">
         <Preference
-            android:title="Region of Interest"
             android:key="@string/set_roi"
-            android:summary="Set the location that can be downloaded"
-            android:icon="@drawable/set_roi_icon"/>
+            android:icon="@drawable/set_roi_icon"
+            android:title="@string/set_roi_title"
+            android:summary="@string/set_roi_summary" />
 
         <ListPreference
-            app:title="Default Center Location"
             app:key="@string/set_default_center_loc"
+            android:icon="@drawable/set_default_center_loc_icon"
+            app:title="@string/default_center_loc_title"
             app:defaultValue="device_location"
             app:entries="@array/center_loc_entries"
             app:entryValues="@array/center_loc_values"
-            app:useSimpleSummaryProvider="true"
-            android:icon="@drawable/set_default_center_loc_icon"/>
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 
-    <PreferenceCategory app:title="Offline Maps">
+    <PreferenceCategory app:title="@string/offline_maps_category_title">
         <Preference
-            android:title="Download Region of Interest"
             android:key="@string/download_roi"
-            android:summary="Store limited maps for offline use"
-            android:icon="@drawable/download_roi_icon"/>
+            android:icon="@drawable/download_roi_icon"
+            android:title="@string/download_roi_title"
+            android:summary="@string/download_roi_summary" />
 
         <SwitchPreferenceCompat
-            app:title="Offline Mode"
             android:key="@string/enable_offline_mode"
-            app:summaryOff="Currently uses online maps"
-            app:summaryOn="Currently uses offline maps"
-            android:icon="@drawable/offline_mode_icon"/>
-
-        <Preference
-            android:title="Delete Downloaded Data"
-            android:key="@string/delete_downloaded_roi"
-            android:summary="Remove downloaded maps"
-            android:icon="@drawable/delete_downloaded_roi_icon" />
+            android:icon="@drawable/offline_mode_icon"
+            app:title="@string/offline_mode_title"
+            app:summaryOff="@string/offline_mode_off_summary"
+            app:summaryOn="@string/offline_mode_on_summary" />
     </PreferenceCategory>
 
 
-    <PreferenceCategory app:title="Additional Information">
+    <PreferenceCategory app:title="@string/additional_info_category_title">
         <Preference
-            android:title="About Biomapper"
             android:key="@string/open_about_page"
-            android:summary="App guide and background"
-            android:icon="@drawable/about_page_icon"/>
+            android:icon="@drawable/about_page_icon"
+            android:title="@string/about_page_title"
+            android:summary="@string/about_page_summary"/>
     </PreferenceCategory>
 
 

@@ -1,5 +1,6 @@
 package com.example.biomapper;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,22 +9,27 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 /**
  * Provides an interface for the user to select a point on the map they want
- * to be their "region of interest."
+ * to be teh center of their "region of interest."
  */
 public class RoiManager extends Fragment
 {
     // Declare references used to access views, other fragments, and shared preferences.
     private static MainActivity mainActivity;
     private static FragmentManager fragmentManager;
+    private static SharedPreferences sharedPreferences;
 
+    private static ImageButton acceptRoiButton;
+    private static ImageButton deleteRoiButton;
 
 
     /**
@@ -34,15 +40,16 @@ public class RoiManager extends Fragment
     {
         super.onCreate( savedInstanceState );
 
-        // Initialize references to Main Activity and the fragment manager.
+        // Initialize references to Main Activity, fragment manager, and shared preferences.
         mainActivity = (MainActivity) getActivity();
         fragmentManager = mainActivity.getSupportFragmentManager();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
     }
 
 
 
     /**
-     * Called after onCreate, creates the fragment's view.
+     * Called after onCreate. Creates the fragment's view.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,12 +63,16 @@ public class RoiManager extends Fragment
 
 
     /**
-     *
+     * Called once the view has been created.
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState )
     {
-        //
+        // Initialize references to View components.
+        acceptRoiButton = mainActivity.findViewById( R.id.accept_roi );
+        deleteRoiButton = mainActivity.findViewById( R.id.delete_roi );
+
+        // Adds the Base Map to this fragment.
         if( savedInstanceState == null )
         {
             View mapView = mainActivity.baseMap.getView();
@@ -83,7 +94,7 @@ public class RoiManager extends Fragment
                 );
 
                 final View toolbar = mainActivity.findViewById( R.id.roi_manager_toolbar );
-                // - - - TODO Make it so the Base Map margins are ynamically based on the toolbar and accept/cancel bar - - -
+                // - - - TODO Make it so the Base Map margins are dynamically based on the toolbar and accept/cancel bar - - -
                 /*
                 mainActivity.runOnUiThread(
                         new Runnable()
@@ -133,6 +144,65 @@ public class RoiManager extends Fragment
                     }
                 }
         );
+
+        // Add functionality to the save ROI button.
+        acceptRoiButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                saveRoi();
+            }
+        });
+
+        // Add functionality to the delete ROI button.
+        deleteRoiButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                deleteRoi();
+            }
+        });
+    }
+
+
+
+    /**
+     * Saves the ROI marker's current location to persistent storage.
+     */
+    private void saveRoi()
+    {
+        if( mainActivity.baseMap.roiMarker != null )
+        {
+            // Save the current ROI's lat and long to Shared Preferences.
+            sharedPreferences.edit().putFloat( getString( R.string.roi_lat ),
+                    mainActivity.baseMap.tempRoiLat ).commit();
+            sharedPreferences.edit().putFloat( getString( R.string.roi_lng ),
+                    mainActivity.baseMap.tempRoiLon ).commit();
+            // Acknowledge that a ROI exists.
+            sharedPreferences.edit().putBoolean( getString( R.string.roi_set ), true).commit();;
+        }
+    }
+
+
+
+    /**
+     * Deletes the ROI marker from the map and persistent storage.
+     */
+    private void deleteRoi()
+    {
+        // Remove the ROI from the map, if it exists.
+        if( mainActivity.baseMap.roiMarker != null )
+        {
+            mainActivity.baseMap.roiMarker.remove();
+            mainActivity.baseMap.roiMarker = null;
+        }
+
+        // Clear the ROI shared preferences values.
+        sharedPreferences.edit().putFloat( getString( R.string.roi_lat ), 0 ).commit();
+        sharedPreferences.edit().putFloat( getString( R.string.roi_lng ), 22 ).commit();
+        sharedPreferences.edit().putBoolean( getString( R.string.roi_set ), false).commit();;
     }
 
 
@@ -144,6 +214,12 @@ public class RoiManager extends Fragment
      */
     private void openActionMenu()
     {
+        if( mainActivity.baseMap.roiMarker != null )
+        {
+            mainActivity.baseMap.roiMarker.remove();
+            mainActivity.baseMap.roiMarker = null;
+        }
+
         // ----- Move Base Map view back to the Main Map. -----
         View mapView = mainActivity.baseMap.getView();
         ViewGroup mainMapParent = ((ViewGroup) mainActivity.findViewById( R.id.main_map_container ).getParent() );
@@ -197,4 +273,6 @@ public class RoiManager extends Fragment
         fragmentTransaction.commit();
     }
 
-}
+
+
+} // End of ROI Manager class.

@@ -83,8 +83,6 @@ public class ActionMenu extends Fragment
                 @Override
                 public void onClick( View view )
                 {
-                    mainActivity.baseMap.updateMap();
-
                     openMainMap();
                 }
             }
@@ -100,6 +98,8 @@ public class ActionMenu extends Fragment
      */
     private void openMainMap()
     {
+        mainActivity.baseMap.isSelectingRoi = false;
+
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         // Show the Base Map.
@@ -118,6 +118,9 @@ public class ActionMenu extends Fragment
         {
             fragmentTransaction.add( R.id.main_activity_container, new MainMap(), "main_map" );
         }
+
+        // Update the map, which will apply any changes made to Preferences.
+        ((MainMap) fragmentManager.findFragmentByTag( "main_map" )).updateMap();
 
         // If the Action Menu exists, hide it.
         if( fragmentManager.findFragmentByTag( "action_menu" ) != null )

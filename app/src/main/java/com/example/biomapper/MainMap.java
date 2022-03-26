@@ -5,11 +5,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.biomapper.databinding.FragmentMainMapBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,8 +28,14 @@ public class MainMap extends Fragment
     private FragmentMainMapBinding binding;
     private MainActivity mainActivity;
     private FragmentManager fragmentManager;
+    private SharedPreferences sharedPreferences;
 
-
+    private static final int CHM_CODE = 0;
+    private static final int DEM_CODE = 1;
+    private static final int AGB_CODE = 2;
+    private int[] chmDataValArray = {0, 9, 18, 27, 36, 45};
+    private int[] demDataValArray = {0, 300, 600, 900, 1200, 1500};
+    private int[] agbDataValArray = {0, 90, 180, 270, 360, 450};
 
     /**
      * Called when the map container is created.
@@ -40,6 +49,8 @@ public class MainMap extends Fragment
         // Initialize reference to Main Activity and the fragment manager.
         mainActivity = (MainActivity) getActivity();
         fragmentManager = mainActivity.getSupportFragmentManager();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
+
 
         // Add the Base Map.
         //fragmentManager.beginTransaction().add( R.id.base_map, mainActivity.baseMap ).commit();
@@ -84,6 +95,76 @@ public class MainMap extends Fragment
                     }
                 }
         );
+
+        setColorBarValues();
+    }
+
+
+
+    /**
+     * Updates the Main Map whenever the user navigates back from the Action Menu.
+     */
+    public void updateMap()
+    {
+        mainActivity.baseMap.updateMap();
+
+        setColorBarValues();
+    }
+
+
+
+    /**
+     * Sets the data values shown within the color bar based on the current data type.
+     */
+    private void setColorBarValues()
+    {
+        // Check the Preferences to see if the color bar should be shown or not.
+        if( sharedPreferences.getBoolean( getString( R.string.show_color_bar ), false ) )
+        {
+            // Make the color bar visible.
+            mainActivity.findViewById( R.id.color_bar ).setVisibility(View.VISIBLE);
+
+            // Determine the data type values and units based on the currently selected data type.
+            int[] dataValArray;
+            String units = "";
+
+            int dataTypeCode = mainActivity.baseMap.dataTypeCode;
+            if( dataTypeCode == CHM_CODE )
+            {
+                dataValArray = chmDataValArray;
+                units = "m";
+            }
+            else if( dataTypeCode == DEM_CODE )
+            {
+                dataValArray = demDataValArray;
+                units = "m";
+            }
+            else if( dataTypeCode == AGB_CODE )
+            {
+                dataValArray = agbDataValArray;
+                units = "Mg/ha";
+            }
+            else
+            {
+                dataValArray = new int[] { -1, -1, -1, -1, -1 };
+            }
+
+            // Set the values of the Text Views that are within the color bar.
+            ((TextView) mainActivity.findViewById( R.id.color_bar_min )).setText( dataValArray[0] + units );
+            ((TextView) mainActivity.findViewById( R.id.color_bar_1 )).setText( dataValArray[1] + units );
+            ((TextView) mainActivity.findViewById( R.id.color_bar_2 )).setText( dataValArray[2] + units );
+            ((TextView) mainActivity.findViewById( R.id.color_bar_3 )).setText( dataValArray[3] + units );
+            ((TextView) mainActivity.findViewById( R.id.color_bar_4 )).setText( dataValArray[4] + units );
+            ((TextView) mainActivity.findViewById( R.id.color_bar_max )).setText( dataValArray[5] + units );
+
+            // Reset the color bar's layout, making it resize to only be as wide as necessary.
+            mainActivity.findViewById( R.id.color_bar_max ).requestLayout();
+        }
+        else
+        {
+            // Make the color bar invisible.
+            mainActivity.findViewById(R.id.color_bar).setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -95,6 +176,12 @@ public class MainMap extends Fragment
      */
     private void openActionMenu()
     {
+        if( mainActivity.baseMap.roiMarker != null )
+        {
+            mainActivity.baseMap.roiMarker.remove();
+            mainActivity.baseMap.roiMarker = null;
+        }
+
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         // If the Action Menu exists, show it.
@@ -117,4 +204,4 @@ public class MainMap extends Fragment
         fragmentTransaction.commit();
     }
 
-}
+} // End of Main Map class.

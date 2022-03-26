@@ -2,7 +2,8 @@
     <string name="app_name">Biomapper</string>
 
     <!-- __________ Strings used to specify preferences within the code __________ -->
-    <!-- preferences changed within the Preferences/Action Menu -->
+
+    <!-- Preferences changed within the Preferences/Action Menu -->
     <string name="set_data_type">set_data_type</string>
     <string name="filter_data">filter_data</string>
     <string name="remove_filter">remove_filter</string>
@@ -16,7 +17,7 @@
 
     <string name="open_about_page">open_about_page</string>
 
-    <!-- preferences changed within the Filter Manager -->
+    <!-- Preferences changed within the Filter Manager -->
     <string name="chm_filter_set">chm_filter_set</string>
     <string name="chm_filter_min">chm_filter_min</string>
     <string name="chm_filter_max">chm_filter_max</string>
@@ -29,36 +30,71 @@
     <string name="agb_filter_min">agb_filter_min</string>
     <string name="agb_filter_max">agb_filter_max</string>
 
-    <!-- preferences changed within the Roi Manager -->
+    <!-- Preferences changed within the Roi Manager -->
+    <string name="roi_lat">roi_lat</string>
+    <string name="roi_lng">roi_lng</string>
+    <string name="roi_set">roi_set</string>
+
+    <!-- Preferences changed within the Download Manager -->
+    <string name="chm_downloaded">chm_downloaded</string>
+    <string name="dem_downloaded">dem_downloaded</string>
+    <string name="agb_downloaded">agb_downloaded</string>
+    <string name="downloaded_tiles_changed">downloaded_tiles_changed</string>
 
 
-    <!-- __________ Strings visible to the user IN FRENCH __________ -->
+    <!-- __________ Strings visible to the user __________ -->
+    <!-- Strings used in multiple fragments -->
+    <string name="canopy_height_model">"Modèle hauteur de canopée"</string>
+    <string name="digital_elevation_model">"Modèle d'élévation numérique"</string>
+    <string name="above_ground_biomass">"Biomasse aérienne"</string>
+
+    <!-- Base Map user strings -->
+    <string name="map_loading_text">Loading map…</string>
+
     <!-- Preferences/Action Menu user strings -->
-    <string name="action_menu_toolbar_title">Action Menu</string>
+    <string name="select_data_type_title">sélectionner le type de données cartographiques</string>
+    <string name="action_menu_toolbar_title">Menu Action</string>
+    <string name="map_data_title">données cartographiques</string>
+    <string name="apply_data_filter">"Appliquer le filtre de données"</string>
+    <string name="specify_a_range_of_data_values">"Spécifier une gamme de valeurs de filtre"</string>
 
     <!-- Filter Manager user strings -->
-    <string name="data_filter_toolbar_title">Manage Data Filters</string>
-    <string name="chm_range">Canopy height data values are between 0 and 45m.</string>
-    <string name="dem_range">Elevation data values are between 0 and 1500m.</string>
-    <string name="agb_range">Above-ground biomass data values are between 0 and 129 mg/ha of carbon.</string>
-    <string name="filter_instructions">Please enter whole numbers. At least one filter value must be provided.</string>
+    <string name="data_filter_toolbar_title">"Gérer les filtres de données"</string>
+    <string name="chm_range">"Les valeurs des données sur la hauteur de la canopée sont comprises entre 0 et 45m."</string>
+    <string name="dem_range">"Les valeurs des données d'élévation sont comprises entre 0 et 1500m."</string>
+    <string name="agb_range">"Les valeurs de la biomasse aérienne se situent entre 0 et 129 mg/ha de carbone."</string>
+    <string name="filter_instructions">"Veuillez saisir des nombres entiers. Au moins une valeur de filtre doit être fournie."</string>
 
     <!-- Roi Manager user strings -->
-    <string name="set_roi_toolbar_title">Set the Region of Interest</string>
+    <string name="set_roi_toolbar_title">Set the Region of Interest</string><!-- Roi Manager user strings -->
+    <string name="map_locations_title">"Emplacements de la carte"</string>
+    <string name="set_the_region_of_interest_title">"Définir la région d'intérêt"</string>
+    <string name="location_that_can_be_downloaded">"Définir l'emplacement qui peut être téléchargé"</string>
+    <string name="set_the_default_center_location_title">"Définir l'emplacement par défaut du centre"</string>
+    <string name="device_location">"Emplacement de l'appareil"</string>
+    <string name="region_of_interest">"Région d'intérêt"</string>
+    <string name="offline_Maps">"Cartes hors ligne"</string>
+    <string name="download_region_of_interest_summary">"Stockez des cartes limitées pour une utilisation hors ligne"</string>
+    <string name="offline_mode_title">"Mode hors-ligne"</string>
+    <string name="currently_uses_online_maps">"Utilise actuellement des cartes en ligne"</string>
+    <string name="currently_uses_offline_maps">"Utilise actuellement des cartes hors ligne"</string>
+    <string name="delete_downloaded_data_title">"Supprimer les données téléchargées"</string>
+    <string name="delete_downloaded_roi_summary">"Supprimer les cartes téléchargées"</string>
+    <string name="additional_information_title">"Informations complémentaires"</string>
+    <string name="about_biomapper_title">"À propos de Biomapper"</string>
 
     <!-- Download Manager user strings -->
-    <string name="download_manager_toolbar_title">Download Data for Offline Use</string>
-    <string name="download_description">Input a radius in kilometers that determines the size of the downloaded region.
-        This value must be a whole number between 1 and 50 km.</string>
-    <string name="size_estimate">This will download an estimated 0.00 gigabytes of data.</string>
+    <string name="download_manager_toolbar_title">"Télécharger les données pour une utilisation hors ligne"</string>
+    <string name="download_description">"Entrez un rayon en kilomètres qui détermine la taille de la région téléchargée.Cette valeur doit être un nombre entier compris entre 1 et 50 km."</string>
+    <string name="radius_header_text">Download Radius</string>
+    <string name="size_estimate">"Cela permettra de télécharger environ 0,00 gigaoctet de données."</string>
     <!-- %.2f -->
 
     <!-- About Page user strings -->
-    <string name="about_page_toolbar_title">About Page</string>
-    <string name="app_description">Biomapper allows its user to view tropical forest data on a map. There are several datasets available,
-        including canopy height, elevation, and above-ground biomass. It is possible to filter these datasets to a specific range of values, as well
-    as download a region of interest for offline-use.</string>
-    <string name="app_instructions">To filter data, open the Filter Manager page.
-    To download a region, first select the region of interest. Then open the Download Manager page.</string>
+    <string name="about_page_toolbar_title">"Page d'accueil"</string>
+    <string name="app_description">"Biomapper permet à son utilisateur de visualiser des données sur les forêts tropicales sur une carte. Plusieurs jeux de données sont disponibles,dont la hauteur de la canopée, l'élévation et la biomasse aérienne. Il est possible de filtrer ces ensembles de données sur une gamme spécifique de valeurs, ainsi que de télécharger une région d'intérêt pour une utilisation hors ligne.de télécharger une région d'intérêt pour une utilisation hors ligne."</string>
+    <string name="app_instructions">"Pour filtrer les données, ouvrez la page Gestionnaire de filtres.Pour télécharger une région, sélectionnez d'abord la région qui vous intéresse. Ensuite, ouvrez la page Gestionnaire de téléchargement."</string>
+
+
 
 </resources>

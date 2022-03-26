@@ -2,10 +2,10 @@
     <string name="app_name">Biomapper</string>
 
     <!-- __________ Strings used to specify preferences within the code __________ -->
-    <!-- preferences changed within the Preferences/Action Menu -->
+    <!-- Preferences changed within the Preferences/Action Menu -->
     <string name="set_data_type">set_data_type</string>
     <string name="filter_data">filter_data</string>
-    <string name="remove_filter">remove_filter</string>
+    <string name="show_color_bar">show_color_bar</string>
 
     <string name="set_roi">set_roi</string>
     <string name="set_default_center_loc">set_default_center_loc</string>
@@ -16,7 +16,7 @@
 
     <string name="open_about_page">open_about_page</string>
 
-    <!-- preferences changed within the Filter Manager -->
+    <!-- Shared Preferences changed within the Filter Manager -->
     <string name="chm_filter_set">chm_filter_set</string>
     <string name="chm_filter_min">chm_filter_min</string>
     <string name="chm_filter_max">chm_filter_max</string>
@@ -29,12 +29,58 @@
     <string name="agb_filter_min">agb_filter_min</string>
     <string name="agb_filter_max">agb_filter_max</string>
 
-    <!-- preferences changed within the Roi Manager -->
+    <!-- Shared Preferences changed within the Roi Manager -->
+    <string name="roi_lat">roi_lat</string>
+    <string name="roi_lng">roi_lng</string>
+    <string name="roi_set">roi_set</string>
+
+    <!-- Shared Preferences changed within the Download Manager -->
+    <string name="chm_downloaded">chm_downloaded</string>
+    <string name="dem_downloaded">dem_downloaded</string>
+    <string name="agb_downloaded">agb_downloaded</string>
+    <string name="downloaded_tiles_changed">downloaded_tiles_changed</string>
 
 
-    <!-- __________ Strings visible to the user __________ -->
+    <!-- ____________________ Strings visible to the user ____________________ -->
+    <!-- Strings used in multiple fragments -->
+    <string name="canopy_height_model">Canopy Height Model</string>
+    <string name="digital_elevation_model">Digital Elevation Model</string>
+    <string name="above_ground_biomass">Above Ground Biomass</string>
+
+    <!-- Base Map user strings -->
+    <string name="map_loading_text">Loading map…</string>
+
     <!-- Preferences/Action Menu user strings -->
     <string name="action_menu_toolbar_title">Action Menu</string>
+
+    <string name="map_data_category_title">Map Data</string>
+        <string name="set_data_type_title">Set Map Data Type</string>
+
+        <string name="filter_data_title">Data Filters</string>
+        <string name="filter_data_summary">Specify a range of filter values</string>
+
+        <string name="color_bar_title">Show Color Bar</string>
+        <string name="color_bar_off_summary">Currently not shown</string>
+        <string name="color_bar_on_summary">Currently shown</string>
+
+    <string name="map_locations_category_title">Map Locations</string>
+        <string name="set_roi_title">Region of Interest</string>
+        <string name="set_roi_summary">Set the location that can be downloaded</string>
+
+        <string name="default_center_loc_title">Default Center Location</string>
+
+    <string name="offline_maps_category_title">Offline Maps</string>
+        <string name="download_roi_title">Download Region of Interest</string>
+        <string name="download_roi_summary">Store limited maps for offline use</string>
+
+        <string name="offline_mode_title">Offline Mode</string>
+        <string name="offline_mode_off_summary">Currently uses online maps</string>
+        <string name="offline_mode_on_summary">Currently uses offline maps</string>
+
+    <string name="additional_info_category_title">Additional Information</string>
+        <string name="about_page_title">About Biomapper</string>
+        <string name="about_page_summary">App guide and background</string>
+
 
     <!-- Filter Manager user strings -->
     <string name="data_filter_toolbar_title">Manage Data Filters</string>
@@ -48,9 +94,13 @@
 
     <!-- Download Manager user strings -->
     <string name="download_manager_toolbar_title">Download Data for Offline Use</string>
-    <string name="download_description">Input a radius in kilometers that determines the size of the downloaded region.
-        This value must be a whole number between 1 and 50 km.</string>
-    <string name="size_estimate">This will download an estimated 0.00 gigabytes of data.</string>
+    <string name="download_description">Select which data types you would like to download.
+        Then input a radius in kilometers that determines the size of the downloaded region.
+        This value must be a whole number between 1 and 100 km.</string>
+    <string name="radius_header_text">Download Radius</string>
+    <string name="size_estimate">This will download an estimated 0.00 gigabytes of data.
+        It is strongly recommended that downloading is done only when connected to WiFi to avoid
+        using large amounts of cellular data.</string>
     <!-- %.2f -->
 
     <!-- About Page user strings -->
@@ -60,5 +110,7 @@
     as download a region of interest for offline-use.</string>
     <string name="app_instructions">To filter data, open the Filter Manager page.
     To download a region, first select the region of interest. Then open the Download Manager page.</string>
+
+    <string name="select_data_type_title">Select Map Data Type</string>
 
 </resources>

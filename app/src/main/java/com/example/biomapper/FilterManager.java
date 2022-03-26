@@ -65,6 +65,7 @@ public class FilterManager extends Fragment
         // Initialize references to Main Activity and the fragment manager.
         mainActivity = (MainActivity) getActivity();
         fragmentManager = mainActivity.getSupportFragmentManager();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
     }
 
 
@@ -76,9 +77,7 @@ public class FilterManager extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
-
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment.
         View view = inflater.inflate( R.layout.fragment_filter_manager, container, false );
         return view;
     }
@@ -93,13 +92,13 @@ public class FilterManager extends Fragment
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState )
     {
-        // Initialize references to view components.
+        // Initialize references to View components.
         dataTypeSpinner = mainActivity.findViewById( R.id.dataTypeSpinner );
         dataTypeRange = mainActivity.findViewById( R.id.dataTypeRange );
         minValEditText = mainActivity.findViewById( R.id.minEditText );
         maxValEditText = mainActivity.findViewById( R.id.maxEditText );
-        applyFilterButton = mainActivity.findViewById( R.id.accept_filter );
-        clearFilterButton = mainActivity.findViewById( R.id.cancel_filter );
+        applyFilterButton = mainActivity.findViewById( R.id.apply_filter );
+        clearFilterButton = mainActivity.findViewById( R.id.clear_filter );
 
         // Create the toolbar.
         Toolbar toolbar = (Toolbar) view.findViewById( R.id.dataFilterToolbar );
@@ -124,7 +123,7 @@ public class FilterManager extends Fragment
         int initialDataTypeIndex = dataTypeListPref.findIndexOfValue( initialDataTypeValue );
         dataTypeSpinner.setSelection( initialDataTypeIndex );
 
-        // Add functionality to the spinner so that the range and filter values changes based on data type.
+        // Add functionality to the spinner so that the range and filter values change based on data type.
         dataTypeSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener()
                 {
@@ -214,7 +213,7 @@ public class FilterManager extends Fragment
         }
 
 
-        // ---------- Check the retrieved values for errors ----------
+        // ---------- Check the retrieved values for errors. ----------
         boolean validRangeGiven = true;
 
         // Check if both filter values are not set.
@@ -306,15 +305,11 @@ public class FilterManager extends Fragment
 
 
 
-
     /**
      * Checks to see if the given filter is already applied.
      */
     private boolean checkIfSameFilterValues( int dataTypeIndex, int minFilterVal, int maxFilterVal )
     {
-        // Initialize reference to the shared preferences.
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getContext() );
-
         return
             ( dataTypeIndex == CHM_INDEX &&
                 sharedPreferences.getBoolean( getString( R.string.chm_filter_set ), false  ) &&
@@ -355,12 +350,6 @@ public class FilterManager extends Fragment
      */
     private void setFilterValues( int dataTypeIndex, int minVal, int maxVal, boolean isApplyingFilter )
     {
-        // TODO If a filter is being applied, scale the values so they're between 0 an 1200
-        if( isApplyingFilter )
-        {
-
-        }
-
         if( dataTypeIndex == CHM_INDEX )
         {
             sharedPreferences.edit().putBoolean( getString( R.string.chm_filter_set ), isApplyingFilter ).commit();
@@ -388,7 +377,6 @@ public class FilterManager extends Fragment
      */
     public void displayFilterValues( String filterSetKey, String minValKey, String maxValKey )
     {
-
         // Check if the filter for the given data type has been set.
         if( sharedPreferences.getBoolean( filterSetKey, false ) )
         {
