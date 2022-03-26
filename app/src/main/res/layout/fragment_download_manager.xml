@@ -23,14 +23,34 @@
         android:text="@string/download_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:textSize="16sp"/>
 
+    <CheckBox android:id="@+id/chm_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/canopy_height_model"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+    <CheckBox android:id="@+id/dem_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/digital_elevation_model"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+    <CheckBox android:id="@+id/agb_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/above_ground_biomass"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+
     <TextView
         android:id="@+id/radius_header"
-        android:text="Download Radius"
+        android:text="@string/radius_header_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -95,7 +115,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Cancel download"
+                android:text="Delete downloads"
                 android:gravity="center" />
 
             <ImageButton

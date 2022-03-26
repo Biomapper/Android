@@ -1,5 +1,6 @@
 <resources>
-    <!-- Map Data Preferences -->
+
+    <!-- Map Data Types -->
     <string-array name="data_type_values">
         <item>canopy_height_model</item>
         <item>digital_elevation_model</item>
@@ -7,12 +8,12 @@
     </string-array>
 
     <string-array name="data_type_entries">
-        <item>Canopy Height Model</item>
-        <item>Digital Elevation Model</item>
-        <item>Above Ground Biomass</item>
+        <item>@string/canopy_height_model</item>
+        <item>@string/digital_elevation_model</item>
+        <item>@string/above_ground_biomass</item>
     </string-array>
 
-    <!-- Map Centering Preferences -->
+    <!-- Map Centering Options -->
     <string-array name="center_loc_entries">
         <item>Device Location</item>
         <item>Region of Interest</item>

@@ -6,6 +6,9 @@ import androidx.preference.PreferenceManager;
 
 import android.os.Bundle;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+
 /**
  * The main, and only, activity.
  * The component that is first created when the app is launched.
@@ -18,6 +21,8 @@ public class MainActivity extends AppCompatActivity
     // References to fragments that need to be accessed by other fragments.
     public Preferences preferences;
     public BaseMap baseMap;
+
+    FusedLocationProviderClient fusedLocationClient;
 
 
 
@@ -41,7 +46,10 @@ public class MainActivity extends AppCompatActivity
         // Apply the view to the activity's layout.
         setContentView( R.layout.activity_main );
 
-        // Create the fragment transaction object.
+        // Initialize the location API object.
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Initialize the fragment transaction object.
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         // Add the Main Map fragment to the main activity container.

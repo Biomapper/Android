@@ -16,11 +16,6 @@ public class Preferences extends PreferenceFragmentCompat
     MainActivity mainActivity;
     private FragmentManager fragmentManager;
 
-    // - - - To be deleted along with log statements. - - -
-    private static final String TAG = "PreferenceFragment";
-
-
-
     /**
      * Called when creating the Preferences.
      */
@@ -91,26 +86,6 @@ public class Preferences extends PreferenceFragmentCompat
             }
         );
 
-        // Add functionality to the button that deletes all
-        // downloaded tiles located in internal storage.
-        Preference deleteRoiButton = findPreference( getString( R.string.delete_downloaded_roi ) );
-        deleteRoiButton.setOnPreferenceClickListener(
-            new Preference.OnPreferenceClickListener()
-            {
-                @Override
-                public boolean onPreferenceClick(Preference preference)
-                {
-                    // TODO Prompt the user to select which data types they want to delete.
-                    // TODO Delete the local tiles for the selected data type(s).
-
-                    // - - - Logs are to be removed before release - - -
-                    Log.e(TAG, "Delete roi button pressed!");
-
-                    return true;
-                }
-            }
-        );
-
         // Add functionality to the button that opens the About Page.
         Preference aboutPageButton = findPreference( getString( R.string.open_about_page ) );
         aboutPageButton.setOnPreferenceClickListener(
@@ -163,6 +138,7 @@ public class Preferences extends PreferenceFragmentCompat
      */
     private void openRoiManager()
     {
+        mainActivity.baseMap.isSelectingRoi = true;
         mainActivity.baseMap.updateMap();
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -192,7 +168,6 @@ public class Preferences extends PreferenceFragmentCompat
 
         fragmentTransaction.commit();
     }
-
 
 
 
@@ -252,4 +227,4 @@ public class Preferences extends PreferenceFragmentCompat
         fragmentTransaction.commit();
     }
 
-}
+} // End of Preferences class.

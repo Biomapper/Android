@@ -32,31 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </androidx.fragment.app.FragmentContainerView>
-        <!--
-        <View
-            android:id="@+id/roi_manager_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </View>-->
+
     </RelativeLayout>
-
-    <!--
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/roi_manager_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </androidx.fragment.app.FragmentContainerView>
- -->
-<!--
-    <include layout="@layout/fragment_base_map" />
-
-    <!-
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-        <include layout="@layout/fragment_base_map" />
-    </FrameLayout>-->
 
     <LinearLayout
         android:id="@+id/accept_cancel_bar"
@@ -75,7 +52,7 @@
             android:orientation="vertical">
 
             <ImageButton
-                android:id="@+id/accept_filter"
+                android:id="@+id/accept_roi"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="start|bottom"
@@ -93,7 +70,7 @@
             android:orientation="vertical">
 
             <ImageButton
-                android:id="@+id/cancel_filter"
+                android:id="@+id/delete_roi"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="start|bottom"

@@ -9,7 +9,6 @@
     android:tag="main_map"
     tools:context=".MainMap" >
 
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_map_container"
         android:layout_width="match_parent"
@@ -25,8 +24,106 @@
         android:layout_alignParentEnd = "true"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/light_green"
+        app:rippleColor="@color/dark_green"
         app:srcCompat="@drawable/action_menu_icon"
-        app:backgroundTint="@color/light_green"
-        app:maxImageSize="36dp" />
+        app:backgroundTint="@color/dark_green"
+        app:borderWidth="2dp"
+        app:maxImageSize="40dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/color_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="380dp"
+            android:layout_gravity="center_vertical | end"
+            android:background="@color/dark_green"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/color_bar_top_gap"
+                android:layout_width="match_parent"
+                android:layout_height="12.5dp"
+                android:background="@color/white" />
+
+            <ImageView
+                android:id="@+id/color_bar_image"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_marginTop="12.5dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/color_bar" />
+
+            <TextView
+                android:id="@+id/color_bar_max"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="45m"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/color_bar_4"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="70dp"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="36m"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/color_bar_3"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="140dp"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="27m"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/color_bar_2"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="210dp"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="18m"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/color_bar_1"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="280dp"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="9m"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/color_bar_bottom_gap"
+                android:layout_width="match_parent"
+                android:layout_height="12.5dp"
+                android:layout_marginTop="362.5dp"
+                android:background="@color/black" />
+
+            <TextView
+                android:id="@+id/color_bar_min"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="350dp"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="0m"
+                android:textColor="@color/white" />
+        </FrameLayout>
+    </FrameLayout>
+
 
 </RelativeLayout>
